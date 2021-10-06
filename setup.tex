@@ -37,6 +37,7 @@
 
 
 
+\newcommand{\four}[1]{\mathscr{F}\left\{ #1 \right\}}
 \newcommand{\prob}[1]{\textrm{Pr}\left\{ #1 \right\}}
 
 
@@ -159,18 +160,14 @@
 
 
 
-\newcounter{numdem}
-\numberwithin{numdem}{chapter}
-\newenvironment{demonstration}{
-	\noindent
-	\refstepcounter{numdem}
-	
+\newenvironment{proof}{
+	\noindent	
 %	\renewcommand{\de}[1]{ { \color{ForestGreen} \textbf{#1} } }
 	
-	{\color{ForestGreen}\textbf{Demonstration \thenumdem:}}
+	{\color{ForestGreen}\textbf{Proof:}}
 }{
 }
-\tcolorboxenvironment{demonstration}{
+\tcolorboxenvironment{proof}{
 	boxrule=0pt,
 	boxsep=0pt,
 	colback={White!90!ForestGreen},
