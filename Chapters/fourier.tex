@@ -60,7 +60,7 @@
 	This equation allows us to express the coefficients $c_m$ by using the Fourier transform.
 	
 	
-	\paragraph{Property} The transform property are
+\section{Property of the transform}
 	\begin{itemize}
 		\item the Fourier transform is a \textbf{linear operator}, so for every signals $x_1(t),x_2(t)$ that has a transform associated, for every coefficients $a,b\in \mathds R$ it happens that
 		\[ \mathscr{F} \big\{ a x_1(t) + b x_2(t) \big\} = a \mathscr{F}\big\{x_1(t)\big\} + b \mathscr{F}\big\{x_2(t)\big\}\]
@@ -98,22 +98,83 @@
 		\end{proof}
 		
 		\item \textbf{symmetric property}: if $x(t)\in \mathds R$ is a real valued signal, than
-		\[ X(-\Omega) = X^*(\Omega) \]
+		\[ X(-\Omega) = X^*(\Omega) \qquad X\big(e^{-j\omega}\big) = X^*\big(e^{j\omega}\big) \]
 		\begin{proof}
 		\begin{align*}
 			X(-\Omega) & = \int_{-\infty}^\infty x(t) e^{-j (-\Omega) t} \, dt = \int_{-\infty}^\infty x(t) \left(e^{-j\Omega t}\right)^* \, dt \\ 
 			& = \left( \int_{-\infty}^\infty x(t) e^{-j\Omega t} \, dt\right)^* = X^*(t)
 		\end{align*}
 		\end{proof}
-		From this property we can state that the \textbf{magnitude spectrum} $|x(\cdot)|$ (and so the real part of the spectrum) is always an even function, while the \textbf{phase spectrum} $\angle x(\cdot)$ (thus the imaginary part of the spectrum) is an odd function.
+		From this property we can state that the \textbf{magnitude spectrum} $|x(\cdot)|$ (and so the real part of the spectrum) is always an even function, while the \textbf{phase spectrum} $\angle x(\cdot)$ (thus the imaginary part of the spectrum) is an odd function. \vspace{3mm}
 		
+		As corollary to this property is that if the function $x(t)$ is real and even, it happens that $X(-\Omega) = X(\Omega)$ and the transform it's also inside the real domain (not the complex one).
+		\begin{proof}
+			Given the even function $x(t) \in \mathds R$ we can write
+			\begin{align*}
+				X(\Omega) & = \int_{-\infty}^\infty x(t) \overbrace{\big(\cos(\Omega t) + \cancel{j \sin(\Omega t)}\big)}^{e ^{-j\Omega t}} \, dt 
+			\end{align*}
+			Due to the fact that for an even function only the cosine part of the $e^{j\Omega}$ remains, this means that also the spectrum is real.
+		\end{proof}
+		Instead if the real function $x(t)$ is odd, than $X(\Omega)$ is purely imaginary.
+		\begin{proof}
+			Given the even function $x(t) \in \mathds R$ we can write
+			\begin{align*}
+				X(\Omega) & = \int_{-\infty}^\infty x(t) \overbrace{\big(\cancel{\cos(\Omega t)} + {j \sin(\Omega t)}\big)}^{e ^{-j\Omega t}} \, dt 
+			\end{align*}
+			Due to the fact that for an odd function only the sine part of the $e^{j\Omega}$ remains, this means that also the spectrum is real.
+		\end{proof}
+		In general every real function $x(t)$ can be decomposed into two function: an even one $x_e(t)$ and a odd one $x_o$ defined as
+		\[ x_e(t) = \frac{x(t)+x(-t)}{2} \qquad x_o = \frac{x(t)-x(-t)}{2} \qquad \Rightarrow \quad x(t) = x_e(t)+ x_o(t) \]
+		This means that the spectrum of every function can be subdivided in only real part (associated to $x_e$) and a purely imaginary part (associated to $x_o$):
+		\[ X(\Omega) = \int_{-\infty}^\infty x_e(t) \cos(\Omega t) \, dt + j \int_{-\infty}^\infty x_o(t)\, \sin(\Omega t)\, dt = X_e(\Omega) - j X_o(\Omega)\]
+	
+		\item \textbf{time reversal property}: given a real/discrete signal $x(t),x(n)$, than the Fourier transform of the reversed function equals to the conjugate of the transform with reverse axes
+		\[ \four{x(-t)} = X^*(-\Omega) \qquad \four{x(-n)} =X^*(e^{-j\omega}) \]
+		In particular if the signal is real it also happens that $\four{x(-t)} = X^*(\Omega)$.
+		\begin{proof}
+			Dimostrazione mediante cambio di variable.
+		\end{proof}
+		
+		\item \textbf{windowing theorem}: assume having to signal $x(t),w(t)$ (or $x(n), w(n)$ ) that produces the signal $y(t) = x(t) \, w(t)$ (note that this is not a linear operation), then the corresponding Fourier transform is the convolution (in the frequency domain) of the transforms:
+		\[ Y(\Omega) = X(\Omega)*W(\Omega) = \frac 1 {2\pi} \int_{-\infty}^{\infty} X(\Theta) W(\Omega - \Theta)\, d\Theta \]
+		\[ Y(e^{j\omega}) = X(e^{j\omega}) * W(e^{j\omega}) = \frac 1 {2\pi} \int_{-\pi}^\pi X(e^{j\theta}) W(e^{j(\omega-\theta)}) \, d\theta  \]
+		
+		This is important because when we analyse a signal, we are analysing only one portion (in time) of the signal itself, we never can scan the full length of the signal. Analytically speaking analysing the signal $x(t)$ in a certain range $T$ can be seen as the product of the full $x$ signal with a rectangle signal $w$ with value 1 in the sampling range and 0 elsewhere. In a practical way this means that by analysing only a set of the signal $x$ (and not the full one), we introduce a distortion (due to $w$) that can be \textit{measured} with the convolution operation.
+		
+		\begin{proof}
+		\begin{align*}
+			\sum_{n=-\infty}^\infty x(n) w(n) e^{-j\omega n} & = \sum_{n=-\infty}^\infty w(n) \left( \frac 1 {2\pi} \int_{-\pi}^\pi x\big(e^{j\theta}\big) e^{j\theta n} \, d\theta \right) e^{-j\omega n} \\
+			& = \frac 1 {2\pi} \int_{-\pi}^\pi \left( X\big(e^{j\theta}\big) e^{j\theta n} \sum_{n=-\infty}^\infty w(n) e^{-j\omega n} \right) \, d\theta \\
+			& = \frac 1 {2\pi} \int_{-\pi}^\pi \left( X\big(e^{j\theta}\big)  \sum_{n=-\infty}^\infty w(n) e^{-j(\omega-\theta) n} \right) \, d\theta \\
+			& = \frac 1 {2\pi} \int_{-\pi}^\pi X\big(e^{j\theta}\big) W \big(e^{j(\omega - \theta)}\big) \, d\theta
+		\end{align*}
+		\end{proof}
+		An important corollary to this property is the \textbf{Parsevals's theorem} that states that given two signals $x,y$, than it happens that
+		\[ \four{\int_{-\infty}^\infty x(t) y^* (t)\, dt} = \frac 1 {2\pi} \int_{-\infty} ^\infty X(\Omega) Y^*(\Omega)\, d\Omega \]
+		This is useful because if we calculate $\int_{-\infty}^\infty x(t)x(t)\, dt$ we get that the energy of the signal can be calculated also in the frequency domain.
+		
+		\item \textbf{correlation property} (in time): this values tends to measure the similarity between of two signals $x,y$ and it's define by the operator $\otimes$:
+		\[ x(t) \otimes y(t) = \int_{-\infty}^\infty x(\tau) y^*(t+\tau)\, d\tau = x(t)*y^*(-t) \]
+		Note that in general if we calculate the correlation between the same function ($x\otimes x$), that measures the \textbf{autocorrelation}.
+		
+		In general we can use the property of the transform of a correlated signal as
+		\[ \four{x(t)\otimes y(t)} = \frac 1{2\pi} \int_{-\infty}^\infty X(\Omega) Y^*(\Omega) e^{j\Omega t} \, d\Omega  \]
+		The proof of this property can be done by using the Parsevals's theorem.
 	\end{itemize}
 	
+	\subsection{Remarkable examples of Fourier transforms}
+		\begin{align*}
+			\four{\delta(t)} & = \intinf \delta(t) e^{-j\Omega t}  \, dt = e^{-j\Omega 0} \\ & = 1 \\
+			\Rightarrow \quad \four{\delta(t - t_0)} & = e^{-j\Omega t_0}
+		\end{align*}
+		\begin{align*}
+			\four{A \, \textrm{rect}_\tau(t)}	& =	 A \int_{-\tau/2}^{\tau/2} e ^{-j\Omega t} \, dt = \frac \tau 2 A \frac{e^{-j\Omega \tau/2} - e^{j\Omega \tau/2}}{-j\Omega \frac \tau 2} \\ & = A \tau \sinc (\Omega \tau/2) \\
+			\four{a} & = a \, \delta(\Omega)
+		\end{align*}
 	
+		In a general way we can use the \de{duality principle} for which it happens that $x(t) \xrightarrow{\mathscr{F}} X(\Omega)$ leads to $X(t) \xrightarrow{\mathscr{F}} x(-\Omega)$ and $x(\Omega) \xrightarrow{\mathscr{F}} X(-t)$.
 	
-	
-	
-	
+
 	
 	
 	

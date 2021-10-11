@@ -1,8 +1,129 @@
 \chapter{Introduction}
-
-	\textbf{06/10/2021}
 	
-	\paragraph{Energy and power signals} Given a signal $x(t)$ with $t\in [-T/2, T/2]$ or a discrete one $x(n)$ with $n \in [-N/2,N/2]$, we define the \de{energy} $E_T$ and the \de{power} $P_T$ as
+\section*{Signals}
+	A mechatronics system can be seen as a mechanical system that, with the use of electronic part (sensors and actuators), it's capable to perform autonomous operation. In this sense it's important to analyse the \de{signals}, the generic functions $x(t)$ (depending on time $t$) usually associated to physical quantities (such speed, position, temperature...) that are useful to provide information about a physical phenomena.
+	
+	Real signals are usually described as \textbf{deterministic}, so as an analytical function that's repeatable over time, or a \textbf{stochastic} description that consider differences in time while sharing statistical properties.
+	
+	By a pure mathematical perspective, the domain and co-domain of the signals can be be discrete $\mathds Z$ or real $\mathds R$ evaluated, generating a set of different named signal: \textbf{analog signals} $\mathds R \rightarrow \mathds R$, \textbf{discrete-time signals} $\mathds Z \rightarrow \mathds R$, \textbf{continuous-time signals} $\mathds R \rightarrow \mathds Z$ and \textbf{digital signals} $\mathds Z \rightarrow \mathds Z$. As convention continuous signals are described by the time variable $t$, while the discrete-time functions uses the indexing variable $n$. \vspace{3mm}
+	
+	Nowadays most of the signals are computed as digital, so an important operation is the \textbf{ADC} (\textit{Analog-Digital Conversion}) that allow to convert an analog signal $x(t)$ into a digital signal $x_d(n)$. In order to do so, 3 steps are required:
+	\begin{enumerate}
+		\item the \textbf{sampling} that where analog input voltage values are sampled at equidistant time intervals $T_{adc}$;
+		\item the \textbf{quantization} where sampled values are mapped to finite precision value;
+		\item the \textbf{coding} where quantized values are coded binary; in general this operation is done simultaneously with the quantization.
+	\end{enumerate}
+	The main parameters of this operation are the \textbf{sampling frequency} $f_c = 1 / T_{adc}$ and the \textbf{number of significant bits} $b$.	
+	
+\section*{Systems}
+	\de{Systems} are the mathematical model that describes how one (or more) input(s) signals can be transformed by a physical phenomenon or item. By this definition is obvious that systems can be defined as \textbf{SISO} (\textit{Signle-Input Single-Output}) or \textbf{MIMO} (\textit{Multiple-Input Multiple-Output}) and, as the signals, they can be analog/digital or hybrids.
+	
+	Easy to analyse systems are the \textbf{linear} ones for whose, given the transfer function $T$ that relates the input $x_i$ with the output $y_i$ of the system, the following relation is true for all signals $x_1,x_2$ and coefficients $a,b\in \mathds R$:
+	\[ T \Big( a \, x_1(t) + b\, x_2(t) \Big) = a \, T\Big(x_1(t)\Big) + b \, T\Big(x_2(t)\Big) \]
+	Other relevant systems are the ones that presents the \textbf{shift} (time) \textbf{invariance}, so if given the output $y$ of a signal $x$ over a transfer function $T$ it's verified that
+	\[ y(t) = T\Big(x(t)\Big) \qquad \Rightarrow \quad y\big(t-t_0\big) = T\Big(x(t-t_0)\Big) \quad \forall t_0 \]
+	In contraposition to this are the \textbf{casual system} where the output depends also on the history of the previous inputs of the system, and not the current one (and so the transfer function $T$ is made of differential equations).
+	
+	An important property of a system is the \textbf{stability}, and in particular considering the BIBO (\textit{Bounded-Input Bounded-Output}) stability for each time $t$ if the value of the signal $x$ is bounded (by a constant $B$), than also the output is bounded (by a constant $B'$), and so
+	\[ | x(t)| \leq B \qquad \Rightarrow \quad \exists B' \ \textrm{such that} \ |y(t)| \leq B' \qquad \forall t \]
+
+\section*{Digital Signal Processing}
+	A \textbf{digital signal processing} gives a lot of advantages in terms of flexibility, robustness (stability) of the analysis, predictability, performance, development time and a known numerical precision. The drawback of this signal processing are the limitation of the ADC and DAC sampling rates, the limited dynamic range and of course the quantization errors due to the round-offs.
+	
+	The power of the digital signal processing is that the process can either be \textbf{off-line} or \textbf{on-line}:
+	\begin{itemize}
+		\item in a off-line processing all the signal acquired from the environment are stored in memory modules in order to perform the processing operation in a distinct time; this kind of technique can be used in all the contexts where timing is not an issue, like photographic images processing;
+		
+		\item in a on-line system the processing is performed within a given time from the acquisition and this technique are especially used in control system where it's important to have a quick response time. The on-line processing can be classified as \textbf{serial} if each new sample acquired is analysed, or as \textbf{block} if only a set of $N$ new samples are processed together.  
+	\end{itemize}
+
+\section*{Basic continuous time signals}
+	
+	\paragraph{Dirac pulse} The \de{dirac pulse} function $\delta (t)$ is a particular distribution, used as a mathematical stratagem, that allow to extract the particular value of a function in a precise time. In particular for all real evaluated function $\phi(t)$, it's always verified that 
+	\begin{equation*}
+		\intinf \phi(t)\delta(t) \, dt = \phi(0)
+	\end{equation*}
+	Mathematically speaking the Dirac pulse is a function that tends to infinity only when approaching to zero, while being zero everywhere else; by using a limit definition it's possible to express this function as
+	\begin{equation}
+		\delta(t) := \lim_{\varepsilon \rightarrow 0} \begin{cases}
+			1/\varepsilon \quad & t \in[0,\varepsilon] \\
+			0 & \textrm{otherwise}
+		\end{cases}
+		\qquad \Rightarrow \quad \intinf \delta(t)\, dt = 1
+	\end{equation}
+	
+	\paragraph{Unit step} The \de{unit step} $u(t)$ is a particular function that can be seen as the integral of the Dirac function and it's used to model sudden events; the mathematical representation of the function is defined as
+	\begin{equation}
+		u(t) := \begin{cases}
+			1 \qquad & t \geq 0 \\
+			0 \qquad & t < 0
+		\end{cases}
+	\end{equation}
+
+	\paragraph{Rectangular function} The \de{rectangular function} $\rect_\tau(t)$ it's used to model pulses of finite amplitude and duration $\tau$ with negligible rise and fall times; it's mathematical definition is
+	\begin{equation}
+		\rect_\tau (t) := \begin{cases}
+			1 \qquad & -\frac \tau2 \leq t \leq \frac \tau 2 \\
+			0 & \textrm{othewise}
+		\end{cases}
+	\end{equation}
+
+	\paragraph{Sinc function} An other important function used to model the behaviour of ideal lowpass filters is the \de{cardinal sine} $\sinc$ function defined as
+	\begin{equation}
+		\sinc(t) := \begin{cases}
+			\frac{\sin(\pi t)}{\pi t} \qquad & t \neq 0 \\
+			1 & t = 0
+		\end{cases}
+	\end{equation}
+
+	\paragraph{(Co)sine functions} The simplest periodic functions that are often used to represent signals (as in the Fourier transform) are the \de{cosine} $\cos(t)$ and the \de{sine} $\sin(t)$ that are in general described by an amplitude $A$, a frequency $f_0$ and an initial phase $\theta_0$ with the general equation
+	\begin{equation}
+		x(t) = A \cos \big( 2\pi f_0 t + \theta_0 \big)
+	\end{equation}
+
+	\paragraph{Exponential functions} In signal processing is often used the \de{exponential} function with a complex exponent coefficient expressed in the form $\sigma + j \omega$ (where $j = \sqrt{-1}$): in this case it's also important to remember the \textbf{Euler relation} for which
+	\begin{equation}
+		x(t) := A e^{(\sigma + j \omega) t } = A e^{\sigma t} \cos(\omega t) + jAe^{\sigma t}\sin(\omega t)
+	\end{equation}
+	
+	\paragraph{Modulations} \de{Modulation} of a signal is a phenomena usually present in the communication field but it can also be used to described the non constant speed of rotation of gears. In particular we can elaborate the \textbf{amplitude modulation} depending on a modulating signal (related to the angular velocity $\omega_a$) and the real signal carrier (related to $\omega_0 \gg \omega_a$):
+	\begin{equation}
+		x(t) =  A \Big(1 + k_a \cos\big(\omega_a t+ \phi_a\big)\Big) \cos\big(\omega_0 t\big)
+	\end{equation}
+ 	The modulation of a signal can also be done in relation to the \textbf{phase}, so by having a signal in the form
+ 	\begin{equation}
+ 		x(t) = A \cos\Big( \omega_0 t + k_p\big(\omega_p t + \phi_p\big) \Big)
+ 	\end{equation}	
+ 	
+ 	\paragraph{Periodic signals} Given in general a periodic signal $x(t)$ with period $T$ (so such that $x(t) = x(t+T) \ \forall t$), it's possible to use the \de{Fourier series} that allow do describe that function as a series of co(sine) functions in the following form
+ 	\begin{equation}
+ 	\begin{split}
+ 		x(t) & = \frac{a_0}2 + \sum_{m=0}^\infty a_m \cos\left( \frac{2\pi m}{T} t \right) + \sum_{m=0}^\infty b_m \sin\left( \frac{2\pi m}{T} t \right) \\ & = \sum_{m=-\infty}^\infty c_m e^{j\frac{2\pi m}T t}
+ 	\end{split}
+ 	\end{equation}
+ 	where the relative coefficients can be calculated as
+ 	\[ a_m = \frac 2 T \int_{-T/2}^{T/2} x(t) \cos\left( \frac{2\pi m}{T} t\right) \, dt \qquad  b_m = \frac 2 T \int_{-T/2}^{T/2} x(t) \sin\left( \frac{2\pi m}{T} t\right) \, dt\]
+ 	\[ c_m = \frac{a_m -j b_m}{2} = \frac 1 T \int_{-T/2}^{T/2} x(t) e^{- \frac{2\pi m}{T} t} \, dt \]
+ 	
+\section*{Basic discrete time functions}
+ 	
+ 	Before the description of some basic discrete functions that's related to the way we represent the discrete signals. In particular, as already stated, a discrete signal $x(n)$ is defined at $n\in \mathds Z$ discrete integers value; for digital signal processing we assume that this signal is a sequence of data measured with a \textbf{sampling time} $T_s$, which means that the difference in time between $x(n=1)$ and $x(n=10)$ is $\Delta t = \Delta n\, T_s = (10-1)T_s$.
+ 	
+ 	\paragraph{Basic discrete functions} The discrete counterpart of the Dirac pulse is the \textbf{discrete time pulse} (or Kronecker delta) $\delta(n)$ that's defined as
+ 	\[ \delta(n) = \begin{cases}
+ 		1\qquad & n = 0 \\ 0 & n\neq 0
+ 	\end{cases} \] 
+ 	As in the continuous case, this function is represented to describe generic functions as sequences of pulses like $x(n) = \sum_{k=-\infty}^\infty a_k \delta(n-k)$ (where $a_k$ are the coefficients that represents the amplitude of the signal at index $k$).
+ 	
+ 	As in the continuous case also the unit step sequence can be defined, also as the (complex) exponential sequence
+ 	\[ u(n) = \begin{cases}
+ 		1 \quad & n \geq 0 \\ 0 & n <0
+ 	\end{cases} \qquad \ \qquad \textrm{exponential}: \quad x(n) = e^{(\sigma + j \omega_0)n} \]
+ 	Also (co)sinusoidal functions can be defined for a discrete time case in the form $x(n) = A \cos(n\omega_0 + \phi)$, but note that in this domain the signal is not necessary periodic: in this case the definition of a periodic discrete time signal with period $N$ is $x(n) = x(n+N) \ \forall n$. Cosinusoidal functions can be periodic in a discrete domain if and only if the ratio $\frac{2\pi}{\omega_0}$ is a rational number.
+ 	
+\section*{Energy and power signals}
+	
+	Given a continuous signal $x(t)$ defined in a time range $t\in [-T/2, T/2]$ or a discrete one $x(n):\ n \in [-N/2,N/2]$, we can define their \de{energy} $E_T$ and \de{power} $P_T$ (in both the forms) as
 	\begin{equation}
 	\begin{split}		
 		E_T & = \int_{-T/2}^{T/2} |x(t)|^2 \, dt = \sum_{n=-N/2}^{N/2} |x(n)|^2 \\
