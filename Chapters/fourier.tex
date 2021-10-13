@@ -43,7 +43,16 @@
 	
 	It's possible to have function that are not absolutely summable but for which the Fourier transform exists.
 	
-	\textbf{ESEMPIO DI INVERSIONE DI UNA TRASFORMATA RETTANGOLARE}
+	\begin{example}{: anti-transform of a rectangle spectrum}
+		Let's consider a function whose transform is described by a rectangular distribution $X(\Omega) = \rect_{2\Omega_c}(\Omega)$ (where $\Omega_c = 2\pi f_c$); in order to \textit{read} the function in the time domain we need to calculate the inverse Fourier transform of the signal and so
+		\begin{align*}
+			\antifour{\rect_{2\Omega_c}(\Omega)}(t) & = \frac 1{2\pi} \intinf X(\Omega) e^{j\Omega t} \, d\Omega = \frac 1 {2\pi} \int_{-\Omega_c}^{\Omega_c} e^{j\Omega t}\, d\Omega \\
+			& = \frac{e^{j\Omega_c t} - e^{-j\Omega_c t}}{2\pi j t} = \frac{\sin\big(\Omega_c t\big)}{\pi t} \frac{2f_c}{2f_c} \\ 
+			& = 2 f_c \sinc\big(\Omega_c t\big)
+		\end{align*}
+		This function is an example of a non absolutely summable function (by computing the integral $\intinf 2f_c|\sin(\Omega_c t)| \, dt \rightarrow \infty$ it diverges) but for which the Fourier transform exists.
+	\end{example}
+
 	
 	A weaker necessary condition for the existence of the Fourier transform is that if $X(\Omega)$ (or $X(e^{j\omega})$) exists, than it's necessary that $x(t) = \lim_{\Omega \rightarrow \infty} \frac 1 {2\pi} \int_{-\Omega}^\Omega X(\Omega) e^{j\Omega} \, d\Omega $, or in a more general way the necessary condition of the existence of the transform is that the energy signal converges to a finite number (and so it's not divergent).
 	
