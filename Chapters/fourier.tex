@@ -157,7 +157,7 @@
 		\end{proof}
 		
 		\paragraph{Windowing theorem} Assume having 2 signals $x(t),w(t)$ (or $x(n), w(n)$ ) that produces the signal $y(t) = x(t) \, w(t)$ (note that this is not a linear operation), then the corresponding Fourier transform is the convolution (in the frequency domain) of the transforms:
-		\begin{equation}
+		\begin{equation} \label{eq:four:windowing}
 		\begin{split}
 			\four{x(t)w(t)} & = Y(\Omega) = X(\Omega)*W(\Omega) = \frac 1 {2\pi} \int_{-\infty}^{\infty} X(\Theta) W(\Omega - \Theta)\, d\Theta \\
 			\four{x(n)w(n)} & =  Y(e^{j\omega}) = X(e^{j\omega}) * W(e^{j\omega}) = \frac 1 {2\pi} \int_{-\pi}^\pi X(e^{j\theta}) W(e^{j(\omega-\theta)}) \, d\theta
@@ -223,8 +223,113 @@
 		\four{A \cos\big(\Omega_0 t + \phi_0\big)} & = \intinf A  \cos\big(\Omega_0 t + \phi_0\big) e^{-j\Omega t} \, dt \\ 
 		& = \intinf A \left( \frac{e^{j(\phi_0 + \Omega_0 t)} + e^{-j(\phi_0 - \Omega_0t)} }{2} \right) e^{-j\Omega t}\, dt \\
 		& = \frac A 2 e^{j\phi_0} \lim_{\tau\rightarrow\infty} \int_{-\tau}^\tau e^{j(\Omega_0-\Omega)t}\, dt + \frac A 2 e^{-j\phi_0} \lim_{\tau\rightarrow\infty} \int_{-\tau}^\tau e^{-j(\Omega_0-\Omega)t}\, dt \\
-		TBC
+		& = \frac A 2 e^{j\phi_0} \lim_{\tau\rightarrow\infty} 2\tau \sinc\Big(\big(\Omega-\Omega_0\big)t\Big) + \frac A 2 e^{-j\phi_0} \lim_{\tau\rightarrow\infty} 2\tau \sinc\Big(\big(\Omega-\Omega_0\big)t\Big) \\
+		& = \frac A 2 e^{j\phi_0} \delta\big(\Omega - \Omega_0\big) + \frac A 2 e^{-j\phi_0} \delta\big(\Omega + \Omega_0\big)
 	\end{align*}
+	Similarly it can be proven that the transform a sine function can be expressed as
+	\[ \four{A \sin\big(\Omega_0 t + \phi_0\big)} = \frac{A}{2j} e^{j\phi_0} \delta\big(\Omega-\Omega_0\big) - \frac{A}{2j} e^{-j\phi_0} \delta\big(\Omega+\Omega_0\big) \]
+	
+	This transforms are very useful while dealing with periodic signals (with period $T$): in fact in that case we can use the Fourier series to decompose it in a sum of harmonic signals in the form
+	\[ x(t) = \frac{a_0}{2} + \sum_{m=1}^\infty a_m \cos\left( \frac{2\pi m}{T} t \right) + \sum_{m=1}^\infty b_m \sin\left( \frac{2\pi m}{T} t \right) \]
+	By computing the Fourier series of this signal we can see that the spectrum of a periodic signal in the time domain is associated to a sequence of pulses (spaced by a pulsation $\Omega_0 = \frac{2\pi}{T}$) in the frequency domain:
+	\begin{align*}
+		X(\Omega) = &  \frac{a_0}{2} \delta(\Omega) + \sum_{m=1}^\infty\frac{a_m}{2} \left[ \delta\left(  \Omega - \frac{2\pi m}{T} \right) + \delta\left(  \Omega + \frac{2\pi m}{T} \right)\right] \\ & + \sum_{m=1}^\infty\frac{b_m}{2j} \left[ \delta\left(  \Omega - \frac{2\pi m}{T} \right) - \delta\left(  \Omega + \frac{2\pi m}{T} \right)\right] \\
+		= & \frac{a_0}{2} \delta(\Omega) + \sum_{m=1}^{\infty} \frac{a_m - j b_m}{2} \left[ \delta\left(  \Omega - \frac{2\pi m}{T} \right) - \delta\left(  \Omega + \frac{2\pi m}{T} \right)\right] 
+	\end{align*}
+	
+	\paragraph{Exponential} Let's consider the signal $x(t)$ defined as a exponential only for the positive time range, so defined as $x(t) = e^{-\alpha t} u(t)$ (so multiplying the exponential for the unit step function described in page \pageref{eq:intro:unitstep}). Necessary condition for the existence of the Fourier transform is that the energy signal doesn't diverge to infinity: this criteria is matched every time $\alpha > 0$ while in the other case the integral of the signal $x(t)$ diverges. Sure to have a \textit{transformable} function it's possible to apply the transform definition and thus
+	\begin{align*}
+		X(\Omega) & = \intinf e^{-\alpha t} u(t) e^{-j\Omega t}\, dt = \int_0 ^\infty e^{-(\alpha + j\Omega) t} \, dt = - \frac{1}{\alpha + j\Omega} e^{-(\alpha + j\Omega) t} \Big|_0^\infty \\
+		& = \frac{1}{\alpha + j\Omega}
+	\end{align*}
+		
+	\paragraph{Unit step} The unit step $u(t)$ (defined as 1 for $t\geq0$ and 0 for $t<0$) has it's own transform that's computed considering the following definition of the signal
+	\[ x(t) = u_1(t) + u_2(t) = \frac 1 2 + \frac 1 2 \textrm{sign(t)} \qquad \textrm{sign}(t) = \lim_{\alpha\rightarrow 0}\begin{cases}
+		e^{-\alpha|t|} \quad & t \geq 0 \\
+		-e^{-\alpha |t|} & t < 0
+	\end{cases}\]
+	This means that the transform of the unit step can be evaluating (using the linear property) as the sum of the transform of the constant term $u_1$ and the limit exponential $u_2$:
+	\begin{align*}
+		X(\Omega) & = U_1(\Omega) + U_2(\Omega) = \frac 1 2 \delta(\Omega) + \frac 1 2 \lim_{\alpha\rightarrow 0} \left( \frac{1}{\alpha + j\Omega} - \frac{1}{\alpha - j\Omega} \right)  \\
+		& = \frac 1 2 \delta(\Omega) - \frac 1 2 \lim_{\alpha\rightarrow 0}\frac{2j\Omega}{\alpha^2	 + \Omega^2} \\ 
+		&= \frac 1 2 \delta(\Omega) + \frac{1}{j\Omega}
+	\end{align*}
+	
+	\paragraph{Amplitude modulation signal} Let's consider a signal $a(t)$ that's modulated by a cosine function this resulting in the function $x(t) = a(t) \cos(\Omega_0t + \phi)$. Seeing that this is a product between two function it's possible to use the windowing theorem (eq. \ref{eq:four:windowing}, page \pageref{eq:four:windowing}) to compute it's transform:
+	\begin{align*}
+		X(\Omega) & = A(\Omega) * \left( \frac{e^{j\phi}}{2} \delta\big(\Omega-\Omega_0\big) + \frac{e^{-j\phi}}{2}\delta\big(\Omega+\Omega_0\big) \right) \\
+		& = \frac{e^{j\phi}}{2} \intinf A(\theta) \delta\Big( \Omega - \big(\theta - \Omega_0\big) \Big) \, d\theta + \frac{e^{-j\phi}}{2} \intinf A(\theta) \delta\Big( \Omega - \big(\theta + \Omega_0\big) \Big) \, d\theta
+	\end{align*}
+	By applying the definition of the Dirac pulse distribution over the integral we can see that the transform of the signal $x(t)$ is a sort of \textit{division} and \textit{translation} of the spectrum of the signal $A$:
+	\[ X(\Omega) = \frac{e^{j\phi}}{2} A\big(\Omega-\Omega_0\big) + \frac{e^{-j\phi}}{2} A\big(\Omega+\Omega_0\big) \]
+	
+	\paragraph{Phase modulation} \textbf{TO BE REVIEWED}
+	
+	
+	\subsection*{Basic discrete Fourier transforms}
+		\paragraph{Kronecker pulse} Given the unit time pulse $\delta (n)$, it's transform is calculated as a duality of the Dirac pulse in the continuous time case and so
+		\begin{align*}
+			\four{\delta(n)} & = \infsum \delta(n) e^{-j\omega n} = e^{-j\omega 0} \\&= 1 \qquad \forall \omega
+		\end{align*}
+		Shifting the pulse by $n_0$ time steps we have that it's transform is equal to
+		\[ \four{\delta(n-n_0)} = e^{-j\omega n_0}\]
+		
+		\paragraph{Converging exponential sequence} Let's consider the exponential sequence $x(n) = a^n u(n)$ where $|a| < 1$ in order to have a convergent series; it's transform can be consider as
+		\begin{align*}
+			X\big(e^{j\omega}\big) & = \infsum a^n e^{-j\omega n} = \infsum \underbrace{\left( a e^{-j\omega} \right)^n}_{b^n} 
+		\end{align*}
+		We can see that this can be expressed as a geometric series whose limit in general converges to
+		\[ \lim_{N\rightarrow 0} \sum_{n=0}^N b^n = \lim_{N\rightarrow 0} \frac{1-b^{N+1}}{1-b} = \frac{1}{1-b} = \frac{1}{1-ae^{-j\omega}} \]
+		\textbf{RISCRIVERE MODULO E FASE}
+		
+		\paragraph{Constant} The transform of the discrete constant function $x(n) = 1$ can be computed as the dual of the Kronecker pulse, nut in a general way can say that
+		\[ x(n) = \sum_{k=-\infty}^\infty \delta(n-k) \qquad \xrightarrow{\F} \quad X(e^{j\omega}) = 2\pi \sum_{k=-\infty}^\infty \delta(\omega - 2\pi k) \]
+		
+		\paragraph{Unit step}
+		\[ u(n) \qquad \xrightarrow{\F} \quad \underbrace{\frac{1 }{1-e^{-j\omega}}}_{=\four { \frac 1 2 \textrm{sign}(t)}} + \underbrace{\pi \sum_{k=-\infty}^\infty \delta \big(\omega - 2\pi k\big)}_{=\four{\frac 1 2}} \]
+		
+		\paragraph{Useful sequence} Later in this course (and in real scenario application) we can have a signal expressed as $x(n) = (n+1) a^n u(n)$; in this case the transform is equal to 
+		\[ X(e^{j\omega}) = \four{(n+1)a^n u(n)} = \frac{1}{\big(1-ae^{-j\omega} \big)^2} \]
+		and can be computed by considering the differentiation rule of the Fourier transform, in fact
+		\begin{align*}
+			X(e^{j\omega}) & = \four{a^n u(n)} + \four{n a^n u(n)} = \four{y(n)} + \four{n\, y(n)} \\
+			& = \frac{1}{1-a e^{-j\omega}} + j \frac{d}{d\omega} \left(\frac{1}{1-a e^{-j\omega}}\right) = \frac{1}{\big(1-ae^{-j\omega} \big)^2}
+		\end{align*}
+	
+		Another remarkable example of sequence present in the real life is the one defined as
+		\[ x(n) = r^n \frac{\sin\omega_p(n+1)}{\sin\omega_p} \qquad \xrightarrow{\F} \quad \frac{1}{1 - 2 r\cos\omega_p e^{-j\omega} + e^2 e^{-j2\omega} }   \]
+		\[ x(n) e^{j\omega_0 n}  \qquad \xrightarrow{\F} \quad2\pi \infsum \delta \big(\omega - \omega_0 + 2\pi n\big) \]
+		
+		\textbf{RIVEDERE TRSFORMATA SENO E COSENO}
+		
+\section{Practical application: gearbox frequency spectrum}
+	In mechanical systems are often used gears to transmit rotational power from a shaft to another; usually the shaft are modelled as ideal component where the torque is constantly transmitted from the pinion to the wheel (depending on the radius of the gears in order to satisfy the relation $r_1 \omega_1 = r_2 \omega_2$) by generating a certain force on the contact point.
+	
+	\textbf{IMMAGINE}
+	
+	However that description is ideal because it doesn't take into account the real way on how the gears transmit the power that's done by a contact of two sliding teeth, one for each gear. This contact generates the force that, in relation to the centres of the gears, transmit the torque between the shafts; the force transmitted during the contact is not constant in time: the first contact point will in fact determine a high force while later on, when the two teeth slides one relative to the other, the force drops. This represent a cyclic phenomena that can be described as a periodic signal (assuming that the two gears are rotating at a constant speed).
+	
+	\textbf{IMMAGINE GRAFICO TRASMISSIONE FORZA}
+	
+	In a practical way, in order to improve the smoothness of the force transmission between the teeth of the gears it should increase the \textbf{profile contact ratio} $\varepsilon_a$ ($1\leq \varepsilon_a < 2$) that represent the number of teeth of that are touching at any time during the motion.
+	
+	The fact that the torque between the shaft is not transmitted constantly enhance the mechanical vibration of the system;  in particular known the period $T$ of the cyclic transmission of the force we can compute the \textbf{fundamental gear meshing frequency} $\Omega_{gmf}$ as $n \Omega_0$, where $n$ is the number of teeth in a gear rotating at a constant velocity $\Omega_0$. By now analysing the spectrum of the torque transmitted we can see that, other then the always present noise, there are impulses at the frequency of rotation $\Omega_0$ but also at every multiple of the gear meshing frequency $\Omega_{gmf}$. By experience all this phenomena stays in the audible range, so associated to frequency from $20Hz$ to $20kHz$.
+	
+	\textbf{TORQUE SPECTRUM}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 	
 	
 	

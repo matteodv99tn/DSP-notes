@@ -1,0 +1,177 @@
+\chapter{Random variables and stochastic processes}
+	Given a \textbf{random experiment}, we define the \de{sample space} $S$, that can be discrete or continuous, is the set of all the possible outcomes of the experiment itself.\\
+	Any subset of the sample space of the random experiment is called \de{event} $E \subseteq S$; in order to relate the sample space with the event we need to consider a so called $\sigma$\textit{-algebra} $B$ on all possible events in $S$ that consist in 3 properties:
+	\begin{enumerate}[i)]
+		\item $S\in B$ 
+		\item if $\forall E \in B$ than it'c complement $\overline E = S E \in B$;
+		\item for any event $E_i \in B$m than the union set $\cup_{i=1}^\infty E_i\in B$.
+	\end{enumerate}
+	
+	If all this properties are satisfied we can defined a \de{probability measure} $P$ in the $\sigma$-algebra $B$ that's a function that can be applied to any event $E$ (so computing $P(E) \ \forall E \in B$) and it must happen that
+	\begin{enumerate}[i)]
+		\item $0 \leq P(E) \leq 1$ 
+		\item $P(S) = 1$
+	\end{enumerate}
+
+	The triplet defined by the sample space $S$, the $\sigma$-algebra $B$ and the probability $P$ defines  the so called \de{probability space}. Other basic properties of the probability operator are that
+	\begin{enumerate}[i)]
+		\item $P(\overline E)= 1 - P(E)$;
+		\item $P(\emptyset) = 0$ and so $P(S) = 1 - P(\emptyset) = 1$;
+		\item $P(E_1 \cup E_2) = P(E_1) + P(E_2) - P(E_1 \cap E_2)$;
+		\item if $E_1 \subseteq E_2$, than $P(E_1) \leq P(E_2)$.
+	\end{enumerate}
+	
+	\paragraph{Conditional probability} Let's now consider t2 event $E_1$ and $E_2$ whose corresponding probabilities are $P(E_1)$ and $P_2$, we can define the \de{conditional probability} $P(E_1|E_2)$, a value that defines the probability to have an event $E_1$ knowing that $E_2$ has already happened, and the formal definition is
+	\begin{equation}
+		P(E_1|E_2) = \frac{P(E_1\cap E_2)}{P(E_2)}
+	\end{equation}
+	If it happens that $P(E_1|E_2) = 1$, than we can deduce that $E_1$ happens every time $E_2$ occurs while when $P(E_1|E_2) = P(E_1)$ the two events are statistically independent (and also in this case it happens that $P(E_1\cap E_2) = P(E_1)P(E_2)$ ) because the probability of an event doesn't affect the other.
+	
+	\paragraph{Total probability theorem} Let's now consider a sample space $S$ partitioned in $n$ disjoined events $E_i$ (so such that $\cup_{i=1}^n E_n = S$ and $E_i \cap E_j = \emptyset$ for all $i\neq j$); at this point for every other event $A\subseteq S$ we have that
+	\[ P(A) = \sum_{i=1}^n P(A|E_i)\, P(E_i) \]
+	This result is the so called \textbf{total probability theorem}; this tool is powerful because it allows us to decompose the event of an unknown events to other known events.
+	
+	\paragraph{Bayes theorem (rule)} This theorem states that
+	\[\forall E_i,E_j \in S \qquad \Rightarrow \quad P(E_i | E_j) = \frac{P(E_j|E_i) P(E_i)}{P(E_j)}\]
+	The proof of this theorem can be derived from the definition of conditional probability by expliciting the term $P(E_i\cap E_j)$ for the definition of $P(E_i|E_j)$ and $P(E_j|E_i)$:
+	\[ P(E_i\cap E_j) = P(E_i|E_j) P(E_j) = P(E_j|E_i) P(E_i) \]
+	
+	
+	\paragraph{Random variable} A \de{random variable} $X$ is a mapping between the sample space $S$ and the real axes $\mathds R$ and so it's denoted $X:S \rightarrow \mathds R$, and in this particular case the random variable is continuous; we can consider a discrete random variable by considering the notation $X: S \rightarrow \mathds Z$.
+	
+	We can now define the \de{cumulative distribution function} (cdf) of a random variable $x$ the function
+	\begin{equation}
+		F_X(x) := P\big\{ X \leq x \big\}
+	\end{equation}
+	By this definition we can note that $0 \leq F_X(x) \leq 1$ and it's a continuous (from the right, so the discontinuity for discrete domain is on the left hand side) non decreasing function. Other property of the cumulative distribution function is that $\lim_{x\rightarrow-\infty} F_X(x) = 0$ and $\lim_{x\rightarrow\infty} F_X(x) = 1$. Another important fact to understand that
+	\[ P\big\{a\leq X \leq b\big\} = F_X(b) - F_X(a) \qquad P\big\{x=a\big\} = F_X(a) - F_X(a^-) \]
+	
+	Related to the random variables is also the \de{probability density function} (pdf) usually written as $f_X(x)$ and defined as
+	\begin{equation}
+		f_X(x) = \frac{d F_X(x)}{dx}
+	\end{equation} 
+	In general this definition is used for real random variable, while for the discrete ones it's preferred the \textbf{probability mass function} (pmf) $P_X$ associated to the derivative of a staircase cumulative distribution function and defined as
+	\[ p_X(x) := \sum_{i=1}^N P_i \, \delta_i(x-x_i) \]
+	where $P_i$ is the probability of the $i$-th event, so is $P(x_i)$. Properties common of the pdf and pmf is that
+	\begin{enumerate}[i)]
+		\item $f_X(x) \geq 0 \ \forall x$;
+		\item $\intinf f_X(x)\, dx = 1$ or $\infsum p_X(x_n) = 1$
+	\end{enumerate}
+
+\section{Statistical moment of a random variable}
+	Given a random variable $X$ it's possible to compute it's \de{raw statistical moment} of order $r$, calculated via the \de{expectation} operator $E\big\{X^r\big\}$, can be computed as
+	\begin{equation}
+		E\big\{X^r\big\} = \begin{cases}
+			\intinf x^r f_X(x)\, dx \qquad & \textrm{if $X$ is continuous} \\ 		
+			\sum_{i}^{} x^r_i P_X\big(x_i\big)\, dx \qquad & \textrm{if $X$ is discrete} 		
+		\end{cases}
+	\end{equation}
+
+	Related to this concept is the \de{central statistical moment} of an order $r$ that's defined as the raw statical moment (of the same order) computed on respect of the \textbf{mean value} $\mu$ of the distribution, so it's calculated as $E\big\{(X-\mu)^r\big\}$; in particular $\mu$ is the raw statistical moment of the first order and by so can be computed as $\mu = E\{X\}$ and allows us to describe the \textit{centrality of a process}, a sort of centroid of the probability density function. We can also compute the median $med$ as the value that satisfies the following relation for the probability: $\textrm{Prob} \{x\leq med\} = \frac 1 2$.
+	
+	By computing the raw statistical moment of second order $E\big\{X^2\big\}$ of a random variable we in fact compute the \textbf{power} of the signal, in particular in physical application. By calculating $E\big\{X^3\big\}$ we can compute the \textbf{\textit{skewness}}, a value that allows us to determine how much symmetry there's in the distribution of the random variable.\\
+	Related to the central statistical moment we can note that the one of order 1 is undefined (in fact $E\{X-\mu\} =0 $ due to the fact that the expectation operator is linear, and so the previous relation can be stated as $E\{X\} - E\{\mu\} = \mu - \mu$). Computing instead the second order central statistical moment we compute the \de{variance} $\sigma^2$ of the distribution, defined as 
+	\begin{equation}
+	\begin{split}
+		\sigma^2 = E\big\{(X-\mu)^2\big\} & = E\{X^2\} - E\{2\mu x\} + E\{\mu^2\} \\
+		& = \textrm{Power} - 2 \mu E\{X\} + \mu^2 \\
+		& = \textrm{Power} - \mu^2 \\
+	\end{split}
+	\end{equation}
+	This coefficient measure the \textit{dispersion} of the probability density function over the mean value of the random variable.
+	
+	\paragraph{Characteristic function} Another useful operator for analysing  a random variable $X$ is the so called \de{characteristic function} $\psi_X$ defined as 
+	\begin{equation}
+		\psi_X(\Omega) := \intinf f_X(x) e^{j\Omega x}\, dx
+	\end{equation}
+	This expression is pretty similar to a continuous time Fourier transform with the only difference that $x$ is not a time variable (but a general signal). This function $\psi_X$ is useful, when computed, because every statistical moment can be derived from that, in fact
+	\begin{equation}
+		E\big\{X^r\big\} =  \frac 1 {j^r} \left.\frac{d^r\psi}{d\Omega^r} \right|_{\Omega = 0}
+	\end{equation}
+	Considering the special case of the Gaussian distribution we can get that the related characteristic function is defined as
+	\[ \psi_X(\Omega) = e^{j\Omega\mu - \frac{\Omega^2\sigma^2}{2}}    \]
+	Let's consider now a random variable $X$ that determines a new random variable $Y=g(X)$, where $g$ is a deterministic function. At this point we can note that in general $f_Y \neq f_X$ and $F_Y \neq F_X$ but an interesting fact is that
+	\[ E\big\{g(X)\}  = E\big\{Y\big\} = \intinf g(x) f_X(x)\, dx \]
+	This expression states that we can compute the mean value of the random variable $Y$ only by knowing $X$ and $g$ (and so not knowing the probability density function $f_Y$), but in general no information regarding the probability density function $f_Y$ and CDF can be stated (in general).\\
+	In the particular case when $g(x) = y$ has a countable number of solutions $x_i$ (with )$i=1,\dots,n$) and exists the derivative $g'(x_i) \neq 0$ for each point $x_i$, then 
+	\[f_Y(y) = \sum_{i=1}^{n} \frac{f_X(x_i)}{|g'(x_i)|}\]
+	
+	\paragraph{Multiple random variable} Let's now consider two random variables $X,Y$ defined in the same sample space $S$: in this case we need to define the \de{joint cumulative density function} $F_{X,Y}$ the function that also take into account the interaction that might occur between the two variables
+	\begin{equation}
+		F_{XY}(x,y) = P\big\{X\leq x \textrm{ and } Y \leq y \big\} = \int_{-\infty}^x \int_{-\infty}^y f_{XY}(u,v)\, du \, dv
+	\end{equation}
+	The joint probability density function related to the random variable can so be determined as
+	\[f_{XY} = \frac{\partial^2 F_{XY}}{\partial x\, \partial y} \]
+	
+	Properties related to this two variables are that
+	\begin{itemize}
+		\item $F_{XY}(x,\infty) = F_X(x)$ and $F_{XY}(\infty,y) = F_Y(y)$; when this happens we refer the result as the \textit{marginal cumulative density function};
+		\item $f_X(x) = \intinf f_{XY}(x,y)\, dy$ and $f_Y(y) \intinf f_{XY}(x,y)\, dx$ and we refer this as \textit{marginal probability distribution function}.
+	\end{itemize}
+	
+	Extending the concept of \textbf{conditional probability} by determining the relative probability density function defined as
+	\begin{equation}
+		f_{X|Y} (y|x) = \begin{cases}
+			\dfrac{f_{XY}(x,y)}{f_X(x)} \qquad & f_X(x) \neq 0 \\
+			0 & \textrm{otherwise}
+		\end{cases}
+	\end{equation}
+	If it happens that $f_{Y|X}(y|x) = f_Y(y)$, then the random variables $X$ and $Y$ are statistically independents and $f_{XY}(x,y) = f_X(x) f_Y(y)$.
+	
+	With all the things described we can define the \textbf{statistical moments} of the two random variables, and in particular the raw and central statistical moments (of order $r$) are defined by the operators
+	\begin{equation}
+	\begin{split}
+		\textrm{raw: }& E\big\{X^rY^r\big\}  = \intinf\intinf x^ry^r f_{XY} (x,y)\, dx\, dy \\
+		\textrm{central: }& E\big\{\big(X - \mu_X\big)^r\big(Y-\mu_Y\big)^r\big\}
+	\end{split}
+	\end{equation}
+	With the raw definition we can compute the \textbf{correlation} $\phi$ defined as $E\{X Y\}$ (raw statistical moment of order one); if the two variables are not correlated then $\phi = E\{X\} E\{Y\}$ (this doesn't mean that the two variable are statistically independents). In general if $X,Y$ are statistically independents then they are uncorrelated, but the reversed proposition isn't true in general (the only exception is for the gaussian distribution for which the statistical independence is equal to the uncorrelation).\\
+	Computing instead the central  statistical moment of order one we can get the \textbf{covariance} $C= E\big\{(x-\mu_X)(y-\mu_Y)\big\}$ of the two variables; in particular we can note that if $\mu_X,\mu_Y= 0$, then $\phi = C$. If also $X,Y$ are uncorrelated, then the covariance $C$ is zero.
+	
+	Usually to analyse the independence of two random variables in data analysis we use the so called \textbf{scatter diagram}:
+	\begin{itemize}
+		\item if the diagram shows a circular \textit{cloud} of points, than the two variables are uncorrelated;
+		\item if the points tends to place in a line (that can be interpolated with a linear equation $y = ax + b$), then the variables are perfectly correlated 
+	\end{itemize}
+	We can also define the \textbf{correlation coefficient} $\rho$ as $\rho_{XY} = \frac{C(X,Y)}{\sigma_x \sigma_y}$ that's equal to 0 when the variables are uncorrelated and it's equal to $\pm 1$ when they are perfectly correlated.
+	
+	Considering now in general $N$ different random variables $X_i$ it's possible to prove the following properties:
+	\begin{align*}
+		i) & \qquad  E\left\{ \sum_{i=1}^N b_i X_i \right\} = \sum_{i=1}^N b_i E \left\{X_i\right\} \\
+		ii)& \qquad \textrm{Var} \left\{ \sum_{i=1}^N b_i X_i \right\} = \sum_{i=1}^N b_i \textrm{Var} \left\{X_i\right\} + \sum_{i=1}^N\sum_{j=1,j\neq i}^N b_i b_j C(X_i,X_j) 
+	\end{align*}
+	where the \textbf{variance} $\textrm{Var}$ is the operator defined as $E\left\{\left(\sum_{i=1}^\infty b_i X_i - \mu \right)^2\right\}$
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
