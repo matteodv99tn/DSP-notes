@@ -25,7 +25,7 @@
 	\begin{equation}
 		P(E_1|E_2) = \frac{P(E_1\cap E_2)}{P(E_2)}
 	\end{equation}
-	If it happens that $P(E_1|E_2) = 1$, than we can deduce that $E_1$ happens every time $E_2$ occurs while when $P(E_1|E_2) = P(E_1)$ the two events are statistically independent (and also in this case it happens that $P(E_1\cap E_2) = P(E_1)P(E_2)$ ) because the probability of an event doesn't affect the other.
+	If it happens that $P(E_1|E_2) = 1$, than we can deduce that $E_1$ happens every time $E_2$ occurs while when $P(E_1|E_2) = P(E_1)$ the two events are statistically independent (and also in this case it happens that $P(E_1\cap E_2) = P(E_1)P(E_2)$ ) bec\frac 1 {2\pi} \intinf \Phi_X(\Omega)se the probability of an event doesn't affect the other.
 	
 	\paragraph{Total probability theorem} Let's now consider a sample space $S$ partitioned in $n$ disjoined events $E_i$ (so such that $\cup_{i=1}^n E_n = S$ and $E_i \cap E_j = \emptyset$ for all $i\neq j$); at this point for every other event $A\subseteq S$ we have that
 	\[ P(A) = \sum_{i=1}^n P(A|E_i)\, P(E_i) \]
@@ -142,10 +142,148 @@
 	\end{align*}
 	where the \textbf{variance} $\textrm{Var}$ is the operator defined as $E\left\{\left(\sum_{i=1}^\infty b_i X_i - \mu \right)^2\right\}$
 	
+	\paragraph{Jointly gaussian random variables} A set of jointly gaussian random variables $X_1,\dots, X_n$ is characterized by a joint probability density function $f_X(x_1,\dots, x_n)$ defined as
+	\[ f_X(x_1,\dots, x_n) = \frac{1}{\sqrt{(2\pi)^n} \det \mathcal C} e^{-\frac 12 (x-\mu)\mathcal C^{-1} (X-\mu)^T} \]
+	where  $x,\mu$ are two $n\times 1$ row vectors and $\mathcal C$ is the \textbf{covariance matrix} defined as 
+	\[ \mathcal C = \begin{bmatrix}ù
+		\rho_1^2 & \textrm{Cov}(x_1x_2) & \dots & \textrm{Cov}(x_1x_n) \\
+		 \textrm{Cov}(x_2x_1)  & \rho_2^2 \\
+		 \vdots & & \ddots \\
+		 \textrm{Cov}(x_nx1_) &&& \rho_n^2
+	\end{bmatrix} \]
+	In this case any subset of these variable is jointly gaussian; if $n=2$ the joint probability density function can be rewritten as
+	\[ f_{X}(x_1,x_2) = \frac{1}{2\pi \sigma_1\sigma_2\sqrt{1-\rho^2}} e^{-\frac 1 {2 - \rho} \left( \frac{(x_1-\mu_1)^2}{\sigma_1^2} + \frac{(x_2-\mu_2)^2}{\sigma_2^2} - \frac{2\rho (x_1-\mu_1)(x_2-\mu_2)}{\sigma_1\sigma_2} \right) } \]
 	
+	In this case of jointly gaussian random variables the concept of uncorrelation is related to the statistical independency. This is due to this properties:
+	\begin{enumerate}[i)]
+		\item \textit{weak law of large numbers}: if we have $n$ uncorrelated random variables (that are assumed to have the same mean value and variance; because they are uncorrelated than the variance is 0), than 
+		\[ \forall \varepsilon \qquad \lim_{n\rightarrow 0} \prob{|\overline X - \mu| > \varepsilon} = 0 \]
+		where $\overline X$ is the mathematical average of the random variables. This also means that
+		\[ \textrm{Var}\overline X = \frac{\sigma^2}{n} \ll \textrm{Var}x_i = \sigma^2\]
+		
+		\item \textit{central limit theorem}: given $X_1,\dots,X_n$ statistically independent random variables with mean values $\mu_1,\dots,\mu_n$ and variances $\sigma_1,\dots, \sigma_n$ (and so they don't have to have the same expectations and variances), then the random variable defined as \[Y = \frac 1 {\sqrt{n}} \sum_{i=1}^\infty  \frac{X_i-\mu_i}{\sigma_i} \backsim \mathcal N(0,1) \] than this variable distributes as a Gaussian with mean value 0 and variance 1. In particular if $\mu_1 = \dots = \mu_n$ and $\sigma_1^2 = \dots = \sigma_n^2$ we have that the variance of the arithmetic average $\textrm{Var}\overline X \backsim \mathcal N \left( \mu, \frac {\sigma^2}n \right)$.
+	\end{enumerate}
 	
+\section{Stochastic processes}
+	A \de{random process} can be described in two ways:
+	\begin{itemize}
+		\item by considering the random process as a collection of continuous/discrete time functions that are related to the outcomes of a given sample space $S$ with a certain statistical distribution; each function is called \textbf{realization} of the random process;
+		
+		\item generally it's easier to describe this kind of processing by considering them as a collection of random variables that changes in time. In a certain way the stochastic process is a consequence of the random variable definition and we consider the random process as characterized by a function that features a mean value and a variance.	
+		
+	\end{itemize}
 	
+	A complete statistical description of a random process $X(t)$ is known if for any set of time instances $(t_1,\dots, t_n) \in \mathds R^n$ the joint probability density function $f_X\big(X(t_1), \dots, X(t_n) \big)$ is also known. In the weaker condition od knowing the $M$th order statistic of the random process, than we also know the joint probability function of $f\big(X(t_1), \dots, X(t_n)\big)$ $ \forall (t_1,\dots,t_n)$ with $n\leq M$; in most engineering application $M$ is enough.
 	
+	If we know   the joint probability density function of order 2 $E\left\{X(t_1)X(T_2)\right\} = \phi(t_1,t_2)$ than this relation is called \textbf{autocorrelation}.
+	
+	\paragraph{Example} Let's consider the random process defined as $X(t) = A \cos(\Omega_0t + \Theta)$ where $\Theta$ is a random variable uniformly distributed between the range $0$ and $2\pi$ and so
+	\[ f_\Theta(\theta) = \begin{cases}
+		\frac 1 {2\pi} \qquad & \theta \in [0,2\pi] \\
+		0 & \textrm{otherwise}
+	\end{cases}\]
+	$X(t)$ is a random process due to the fact that there's a random behaviour due to $\Theta$, but it's also possible to have an analytical description of the time function $g(t,\Theta)$ (the $\cos$) depending by a stochastic variable. Respect to this random process our goals are to define it's probability density function $f_X(x(t))$, the mean value $\mu(t)$ and the autocorrelation $\phi(t_1,t_2)$ of the function on two different times.
+	\begin{itemize}
+		\item To determine the probability density function we consider that the argument $\Omega_0 t + \Theta$ of the cosine can be considered as a unique random variable $\Psi$ (ranging from $0$ to $2\pi$) for a determinate time $t$. In this case we can see that\[ f_\Psi(\psi) = \begin{cases}
+			\frac 1 {2\pi} \qquad & \theta \in [0,2\pi] \\
+			0 & \textrm{otherwise}
+		\end{cases}\]
+		In this way we can rewrite the random process as $x(t) = A \cos(\Psi)$. Solving this equation we can compute that $\psi = \arccos \frac xA$; for every value $\frac xA$ ($\in [-1,1]$) we can compute two solutions $\psi_{1,2}$ such that $\psi_2 = 2\pi - \psi_1$. Knowing the deterministic function that determines $X$ from the random variable $\Psi$ than the probability density function can be determined as (considering that in this case $i=1,2$)
+		\begin{align*}
+			f_X(x) = \sum_i \frac{f_\Psi(\psi_i)}{|g'(\psi_i)|} & = \frac{1}{2\pi}  \frac{1}{A\sin \psi_1} + \frac{1}{2\pi} \frac{1}{A\sin\psi_2} \\
+			& = \frac{1}{2\pi A\sin \left(\arccos \frac{x}{a}\right)} + \frac{1}{2\pi A\sin \left(2\pi - \arccos \frac{x}{a}\right)} \\
+			& = \frac{1}{2\pi A\sqrt{1 - \left(\frac x A\right)^2}} + \frac{1}{2\pi A\sqrt{1 - \left(\frac x A\right)^2}} \\ 
+			&  = \frac{1}{\pi A\sqrt{1 - \left(\frac x A\right)^2}}
+		\end{align*}
+		where $g(\psi) =A \cos(\psi)$ and considering that $\sin(\arccos x) = \sqrt{1-x^2}$; in particular we can see that the probability density function is defined $\forall |x|\leq A$ otherwise it cannot be computed, so in other words:
+		\[ f_X(x) = \begin{cases}
+			\frac 1 {\pi \sqrt{A^-x^2}} \qquad & |x| \leq A \\ 0 & |x| > A
+		\end{cases} \]
+		In this case we can note that $\Psi$ isn't dependent on time, and so the probability density function associated isn't either.
+		
+		\item The mean can now be trivially calculated considering that it's not dependent on the time and that $f_X$ is an even function and so
+		\[ \mu(t) = \mu= \intinf x f_X(x)\, dx = 0\]
+		The same result can be computed considering that $\cos$ is the deterministic function the relates $X$ with $\Psi$ and so
+		\[ \mu = \intinf g(\psi) f_\Psi(\psi)\, d\psi = \int_0^{2\pi} A \cos(\psi) \frac 1 {2\pi} \, d\psi = \frac A{2\pi} \sin\psi\Big|_0^{2\pi} = 0  \]
+		
+		\item The autocorrelation $\phi(t_1,t_2)$ is given by
+		\begin{align*}
+			\phi_X(t_1,t_2) & = E\left\{ A\cos(\Omega_0 t_1 + \theta) A\cos(\Omega_0 t_1 + \theta) \right\} \\
+			& = A^2 E \left\{ \frac 1 2 \cos\big[\Omega_0 (t_1-t_2)\big] + \frac 1 2 \cos \big[ \Omega_0(t_1+t_2) + 2\theta \big] \right\} \\
+			& = \frac {A^2}2 \cos\big[ \Omega_0(t_1-t_2) \big] + \cancel{\frac {A^2} 2 \underbrace{E\left\{ \cos \big[ \Omega_0(t_1+t_2) + 2\theta\big]  \right\}}_{=0}}
+		\end{align*}
+	
+	\end{itemize}
+	
+\subsection{Stationary processes}
+	\textbf{Da rivedere}
+	
+	A random process is defined as \textbf{strict-sense} \de{stationary} (sss) if all joint probability density function do not change for any shift of the time origin; that's equivalent to consider that
+	\begin{align*}
+		i) & \qquad f_X \big(x(t_n)\big) = f_X\big(x(t_{n+k})\big) && \forall k \\
+		ii)& \qquad f_X\big(x(t_n),x(t_m)\big) = f_X\big(x(t_{n+k}), x(t_{m+k})\big)  && \forall k 
+	\end{align*}
+	and so the joint probability function depend only on the distance $t_n-t_m$ (and not the position in the time axes). In real way it's not always possible to work with strict-sense stationary processes, but in engineering application most processes can be approximated as so.
+	
+	A random process is defined as \textbf{wide-sense stationary} (wss) if 
+	\begin{align*}
+		i)& \qquad \mu(t)= E\{x(t)\} = \mu \quad && \textrm{$\mu$ is time independent} \\
+		ii)& \qquad \phi_x(t_1,t_2) = \phi_x(t-t_2) = \phi_x(\tau) \quad && \forall t_1,t_2
+	\end{align*}
+	This properties are easier to be found in real application signals processes.
+	
+	A random process is defined as \textbf{cyclostationary} with period $T_0$ if both mean $\mu$ and autocorrelation $\phi$ are periodic with period $T_0$ and so
+	\begin{align*}
+		i)& \qquad \mu(t + kT_0)= \mu(t)\quad && \forall k \\
+		ii)& \qquad \phi_x(t + \tau + kT_0,t + kT_0) = \phi_x(t+\tau, t) && \forall k
+	\end{align*}
+	An example of a cyclostationary process is the signal $Y(t)$ determined as $X(t) \cos(\Omega_0t)$ where $X(t)$ is a wise-sense stationary signal.
+	
+	\paragraph{Properties of the autocorrelation function for wide-sense stationary processes} In this special case we can note that the autocorrelation $\phi$ present this properties:
+	
+	\begin{align*}
+		i)& \qquad \phi_X(\tau) = \phi_X(-\tau) && \textrm{$\phi$ is even} \\
+		ii)& \qquad \left|\phi_X(\tau)\right| \leq \phi_X(0)  && \textrm{$\phi$ has a maximum at $\tau = 0$} \\
+		iii)& \qquad \textrm{if } \exists T_0 \ | \ \phi_x(T_0) = \phi_X(0)  &\Rightarrow \quad &  \phi_X(kT_0) = \phi_X(0) \quad \forall k
+	\end{align*}
+	
+	\paragraph{Ergodicity} An \textbf{ergodic} process is a subset of a strict-sense stationary random process; in particular if $X(t)$ is a strict-sense stationary process for any deterministic function $g(\cdot)$ we can define two types of \textit{averages}:
+	\begin{itemize}
+		\item the statistical (or ensamble) average 
+		\[ E\left\{g\big(X(t)\big)\right\} = \intinf g(x) f_X(x)\, dx\]
+		and it's independent by the time (due to the stationarity);
+		\item the time average of a given realization defined as
+		\[ \langle g(x(t), S_i) \rangle = \lim_{R\rightarrow \infty} \frac 1 T \int_{-T/2}^{T/2}  g\big(x(t,S_i)\big) \, dt \]
+		This is a real value that depends on the sample space $S_i$ of the realization.
+	\end{itemize}
+	
+	\paragraph{Power and energy for random signals} In the case of random processes $X(t)$ with realisations $x(t,s_i)$, it's possible to define the concept of energy/power for each realisation and so
+	\[ E_i = \intinf x^2(t,s_i)\, dt \qquad P_i = \lim_{T\rightarrow \infty} \frac 1 T \intinf x^2(t,s_i)\, dt  \]
+	For each realisation $E_i,P_i$ are deterministic value, but considering the whole random process they are described in fact by a random variable (that's so not deterministic) with a related statistical distribution. By definition the energy $\varepsilon$ (and power $\pi$), that are the random variables, of the random process has a  mean value $E_X$ that  can be defined as
+	\begin{align*}
+		E_X & = E\left\{ \varepsilon  \right\} = E\left\{ \intinf X^2(t) \, dt \right\} = \intinf E\left\{ X^2(t) \right\}\, dt = \intinf \phi_X(t,t)\, dt \\ 
+		P_X & = E\left\{\pi\right\} = \lim_{T\rightarrow \infty} \frac 1 T \int_{-T/2}^{T/2} \phi_X(t,t)\, dt 
+	\end{align*}
+	In the special case of wide sense stationary process the energy can be computed as $E_X = \intinf \phi_X(0)\, dt (\rightarrow \pm \infty) $ (and so a stationary case can never be energy signals) while the power is $\phi_X(0)$ (and so they can be regarded as power signals).
+	
+	\paragraph{Multiple random processes} Let's consider more random processing (such $X(t)$, $Y(t)$, $Z(t)\dots$) that are related in some way; in order to consider to multiple random process we need to compute the joint probability density functions of the different random variables extracted for each process.\\
+	Two random processes are statistically independent if $\forall t_1,t_2$ it happens that $X(t_1)$ and $Y(t_2)$ are statistically independent; similarly the processes are uncorrelated if $\forall t_1,t_2$ the processes $X(t_1)$ and $X(t_2)$ are uncorrelated. In the particular case of multiple random process we can define the \textbf{cross correlation} as a generalization of the autocorrelation:
+	\[ \phi_{XY}(t_1,t_2) = E\left\{ X(t_1) Y(t_2) \right\} \]
+	
+	Two random processes $X,Y$ are jointly stationary in a wide sense if not only the two processes are wide sense stationary, but also their cross correlation depends only on the time gap of $t_1,t_2$ and so when it happens that
+	\[ \phi_{XY}(t_1,t_2) = \phi_{XY} (\underbrace{t_1-t_2}_{=\tau}) \]
+	
+	\paragraph{Wide sense stationary random processes in the frequency domain} In the frequency domain is possible to retrieve information of the random process by computing the Fourier transform of the correlation function (and this is true only for wide sense stationary processes), and so determining
+	\[ \Phi_X(\Omega) = \intinf \phi_x(\tau) e^{-j\Omega t}\, dt \] 
+	Due to the fact that $\phi(\tau)$ is an even function, than $\Phi_X(\Omega)$ is a pure real function and11 is also positive ($\Phi_X(\Omega) \geq 0$). In particular $\Phi_X$ is always referred as \de{power spectral density}; we can in fact see that $\phi_X(0) = P_X$ defined as
+	\[ \phi_X(\tau)= \frac 1 {2\pi} \intinf \Phi_X(\Omega) e^{j\Omega \tau} \, d\Omega \qquad \xrightarrow{\tau = 0} \quad P_X = \frac 1 {2\pi} \intinf \Phi_X(\Omega) \, d\Omega \]
+	This expression allows also to understand at which frequency the signal presents more components.
+	
+	\paragraph{White noise}  The \de{white noise} $\varepsilon(t)$ is a strict sense stationary random process such that 
+	\[ E\{ \varepsilon(t) \} = 0 \qquad \Phi_\varepsilon(\Omega) = k \in \mathds R \]
+	and so having a mean value 0 and a constant power spectral density. This is an approximation signal used to model disturbances in other main signals. 
+	
+	With this definition this might lead to think that the power signal $P_\varepsilon$ is infinite, but in reality the signal is constant up to a frequency $B$ where the value drops and so $P_\varepsilon = 2B \eta$ (where $\eta$ is the constant value related to $\Phi_\varepsilon$) that's equal to the variance $\sigma_\varepsilon^2$ of the white noise. Due to the properties of the function the autocorrelation of the power signal is a dirac pulse and so $\phi_X(\tau) = \textrm{imp}(t-\tau)$.
 	
 	
 	
