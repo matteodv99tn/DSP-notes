@@ -27,7 +27,7 @@
 	In the discrete time case the relation is between the Z transform $\mathscr{Z}$ defined as
 	\[x(n) \xrightarrow{\mathscr{Z}} X(z) = \sum_{n=-\infty}^{\infty} x(n) z^{-n}  \qquad z \in \mathds C \]
 	where $z$ is a complex variable. Comparing this transform with the discrete-time Fourier one, we can see that by replacing $z$ as $e^{j\omega}$ we can see that they are equal:
-	\[ X\left(e^{j\omega} \right) = X(z) \big|_{z = e^{j\omega}}\]
+	\[ X\left(e^{j\omega} \right) = X(z) \big|_{z = e^{j\omega}} \]
 	Considering that $|e^{j\omega}| = 1 \ \forall \omega$, this means that $e^{j\omega}$ represent a circle in the complex plane with unitary radius and $\omega$ is the angle that describes the point in the circle.
 	
 	\paragraph{Existence conditions of the Fourier transform} In general there's no guarantee that the integral/sum converges in order to get the transform; in particular we can define the \textbf{sufficient condition} (but not necessary) that says that if the signals $x(t), x(n)$ are absolutely summable (such that $\int_{-\infty}^\infty |x(t)|\, dt < \infty$, $\sum_{n=-\infty}^\infty |x(n)| < \inf $) then $X(\Omega), X(e^{j\omega})$ exists.

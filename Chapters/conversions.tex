@@ -1,0 +1,124 @@
+\chapter{Sampling and A/D conversions}
+\section{Impulse response}
+	In order to analyse time invariant linear systems an useful analyses is the one of the \de{impulse response} $h(t)$ (in the continuous time case, while $h(n)$ for the discrete one) defined as 
+	\begin{equation}
+		h(\cdot) = T\big\{ \delta(\cdot) \}
+	\end{equation}
+	where $T$ is the expression that relates the input $x$ with the output $y$ of the system. Depending on the nature and the behaviour of the response we can classify the systems, and in particular in the continuous time case we have that $h(t)$ has an infinite duration, while in the discrete time we can have both have \textit{infinite impulse response} IIR or \textit{finite impulse response} FIR systems.
+	
+	We analyse the impulse response because it permits to fully describe the system and compute the outputs for every generic input signal. Given in fact a linear time invariant LTI system, then 
+	\[ \forall x(\cdot) \qquad \Rightarrow \quad y(\cdot) = x(\cdot) * h(\cdot) \]
+	and so the output can be calculated as a convolution.
+	
+	\begin{proof}
+		In the discrete time case this relation can be proven considered the sequence of input pulses $x(n)$ that can be rewritten as
+		\[ x(n) = \sum_{k=-\infty}^\infty x(k)\, \delta(n-k) \]
+		Computing the output of the system given  it's transformation using $T$, and considering the linearity property we can see that
+		\[ y(n) = T \left\{ \sum_{k=-\infty}^\infty x(k)\, \delta(n-k)  \right\} = \sum_{k=-\infty}^\infty x(n) T\big\{ \delta (n-k) \big\} \]
+		Considering that the system is also time invariant this means that the response $T\big\{ \delta (n-k) \big\} = h_k(n-k)$ is constant and so
+		\[ y(n) = \sum_{k=-\infty}^\infty x(k) h(n-k) = x(n) * h(n) \]\vspace{3mm}
+		
+		A continuous time signal $x(t)$ can instead be rewritten as
+		\[ x(t) = \lim_{\tau\rightarrow0} \sum_{k=-\infty}^{\infty} x(k\tau) \rect_\tau(t-k\tau) \]
+		Similarly to the discrete time case we can evaluate the response of the linear time invariant system as
+		\begin{align*}
+			y(t) & = \lim_{\tau\rightarrow0} T\left\{ \sum_{k=-\infty}^{\infty} x(k\tau) \rect_\tau(t-k\tau) \right\} = \lim_{\tau\rightarrow0} \sum_{k=-\infty}^{\infty} x(k\tau) T \left\{ \frac 1 \tau \rect_\tau(t-k\tau) \right\}\tau 
+		\end{align*}
+		Geometrically the function $\frac 1 \tau \rect_\tau(t-k\tau)$ represent a rectangle whose area is always one, and in particular having $\tau\rightarrow 0$ the function tends to the dirac pulse: the response $T\left\{\frac 1 \tau \rect_\tau(t-k\tau)\right\}$ can so be considered as the impulse response $h_\tau(t-k\tau)$ of the system.
+		\[ y(t) = \lim_{\tau\rightarrow0} \sum_{k=-\infty}^{\infty} x(k\tau) h_\tau(t- k\tau) \tau = \intinf x(\tau) h(t-\tau)\, d\tau = x(t)*h(t)  \]
+	\end{proof}
+	
+	An important thing to consider is the frequency response of the system by transforming the impulse response, and so $H(\cdot) = \four{h(\cdot)}$ represent the \de{frequency responses} of the linear time invariant system; the magnitude $|H(\cdot)|$ can be referred as \textbf{magnitude response} while $\angle H(\cdot)$ is the \textbf{phase response} of the system.
+	
+	Because $h(\cdot)$ is a real function, due to the properties of the Fourier transform we can state that $|H(\cdot)|$ presents a even symmetry (on the frequency axes) while $\angle H(\cdot)$ is an odd function. 
+	
+	Considering also that the output can be computed as the convolution of the impulse response with the input in the time case, then the frequency response of the output can be calculated as
+	\begin{equation}
+		Y(\cdot) = H(\cdot) X(\cdot)
+	\end{equation}
+	
+\section{Filters}
+	A \de{filter} is (typically) a linear system selective in the frequency axes that determines which frequencies should be accepted and the one that should be removed. In general is possible to observe 4 kind of \de{ideal filters} (considering the magnitude response principally):
+	\begin{itemize}
+		\item \textbf{low-pass filter} that accepts magnitudes $|H(\Omega)|$ only for $\Omega < \Omega_c$ while it cancels all the other values. This filter can be modelled as a rectangle function with module 1 in the range $[-\Omega_c,\Omega_c]$;
+		\begin{center}
+			\includegraphics[width=9cm]{filter-low}
+		\end{center}
+		
+		\item the dual behaviour is performed by the \textbf{high-pass filter} that allows to pass through the system only frequencies above a value $\Omega_c$;
+		\begin{center}
+			\includegraphics[width=9cm]{filter-high}
+		\end{center}
+		
+		\item \textbf{band-pass filters} are useful to select only a band of frequencies and so allowing only a range $[\Omega_a,\Omega_b]$ of frequencies to be transmitted.
+		\begin{center}
+			\includegraphics[width=9cm]{filter-band}
+		\end{center}
+		
+		The dual case is the \textbf{stop-band filter} that blocks the frequencies in the specified range.
+	\end{itemize}
+	All this filters are ideal because in  the real world is impossible to implement this kind of response, but only can approximate them and this is due to the causality of the systems (to implement ideal system we need to know also the future behaviour of the signal).
+	
+\section{Ideal continuous - discrete conversion}
+	The \de{analog to digital conversion} ADC process implies the \de{sampling} (of period $T_s$) of a continuous time signal $x_c(t)$ in order to convert it in a discrete time sequence $x(n)$ (that still an analog signal, it's just a discretization on the time axes of the original signal). In the ideal case the output sequence $x(n)$ can be rewritten as
+	\begin{equation}
+		x(n) =x_c\big(nT_s\big) = x_c(t) \infsum \delta\big(t-nT_s\big)  
+	\end{equation}
+	Considering that $\delta\big(t-nT_s\big)$ is a periodic function we can use the Fourier series (with the complex notation) and so
+	\begin{align*}
+		x(n) & = x_c(t) \infsum c_n e^{j\frac{2\pi}{T_s}nt} \qquad \leftarrow c_n = \frac 1 {T_s} \four{\delta(t)}\Big|_{n} = \frac 1 {T_s} \\
+		&= \frac{x_c(t)}{T_s} \infsum e^{j\frac{2\pi}{T_s}nt}
+	\end{align*}
+	Let's consider now to apply the Fourier transform on this signal substituting $n = -k$ we can determine that
+	\begin{equation}
+		\four{x_c(nT_s)} = X_c(\Omega) * \frac 1 {T_s}\sum_{k=-\infty}^\infty \delta\left(\Omega- \frac{2\pi}{T_s}k\right) = \frac{1}{T_s} \sum_{k=\infty}^\infty X_c\left(\Omega - \frac{2\pi}{T_s}n \right)
+	\end{equation}
+	This represent the ideal definition of the frequency spectrum of a sampled signal. In particular we can note that the spectrum of the signal is the exact infinite replica of the continuous spectrum $X_c(\Omega)$ with the spectral replicas distances by a value $\frac{2\pi}{T_s}$, as shown in figure  \ref{fig:conv:replicas}.
+	
+	\begin{figure}[bht]
+		\centering
+		\includegraphics[width=\linewidth]{replicas}
+		\caption{from above: frequency spectrum $X_c(\Omega)$ of the signal $x_c(t)$, frequency spectrum of the sampled signal $x(nT_s)$ for the continuous time Fourier transform and then the spectrum $X(e^{j\omega})$ considering the discrete time Fourier transform.} 
+		\label{fig:conv:replicas}
+	\end{figure}
+		
+	Considering $x(nT_s)$ as a discrete time signal $x(n)$ we have a re-scalation of the time axes and determine an identical spectrum that doesn't depend on the sampling period $T_s$. Considering that $\Omega T = \omega [rad]$ we have a relation that's independent from the time and so is more a \textit{digital} definition. We can so use the discrete Fourier transform
+	\[ x(n) \quad \mapsto \quad X(e^{j\omega})\]
+	and by representing the spectrum (figure \ref{fig:conv:replicas}) the replicas are now at multiples of $2\pi$ (having rescaled the axes of a factor $T_s$).
+	
+	\subsection{Nyquist sampling theorem}
+		The \de{aliasing} problem arise when the spectral replicas of the signals (due to the sampling) tends to overlap and happens when the sampling period is to high (or the sampling frequency is too low in respect to the frequencies of the signal). When this happens that we lose too much information from the original signal and so it's impossible to reconstruct it in an acceptable manner. 
+		
+		\begin{example}{: sampling of a sine wave}
+			Let's consider a sine wave of period $T_0$, if we consider a sampling period $T \ll T_0$ than we can observe that having a lot of samples allows us to \textit{decompose} with good approximation the original sine wave, while considering a sampling period $T \backsim T_0$ than most of the information are lost and the constructed signal isn't good enough.
+		\end{example}
+		
+		The aliasing problem must always be avoided because the loss of information is irrecoverable and in order to do so we have to decrease the sampling period $T_s$ (increasing the sampling frequency $f_s$) in order to avoid the overlap of replicas. Given the maximum frequency $\Omega_n$ of the spectrum of the signal in order to avoid aliasing we have to make sure that
+		\[ \Omega_n < \frac \pi {T_s} \]
+		This represent the base of the \de{Nyquist Shennon sampling theorem}: determining in fact the frequency $f_n = \Omega_n/2\pi$ we can state that
+		\begin{equation}
+			2\pi f_n < \pi t_s \qquad \Rightarrow \quad f_n < \frac{f_s}{2} \quad \leftrightarrow \quad \omega_n < \pi
+		\end{equation}
+		and so the signal frequency should always be less then half of the sampling frequency. In particular we refer to $f_s/2$ as the \de{Nyquist frequency} and determines the maximum allowable frequency of the input signal in order to not have aliasing.
+		
+	\subsection{Sample \& hold}
+		To implement a real analog-digital converter we have to consider the continuous-discrete time converter that's preceded by an \de{anti aliasing filter} $H_a(\Omega)$, a low-pass filter that stops frequencies above the Nyquist one in order to avoid (or at least reduce) the aliasing problem.
+		
+		Consequently to the sampler we need to have a \de{ZOH} Zero Order Hold filter that allows to put a constant output and refresh the out (setting it equals to the input) every sampling period $T_s$. To complete the description of the analog-digital conversion we also need a quantizer block (to discretize the analog function in the values range) and an encoding block that determines a digital output. 
+		
+		\begin{figure}[bht]
+			\centering
+			\includegraphics[width=10cm]{adc-steps}
+			\caption{composing block of a analog digital converter unit.}
+		\end{figure}
+	
+		
+	
+	
+	
+	
+	
+	
+	
+	
+	
