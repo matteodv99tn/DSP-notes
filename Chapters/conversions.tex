@@ -104,20 +104,105 @@
 	\subsection{Sample \& hold}
 		To implement a real analog-digital converter we have to consider the continuous-discrete time converter that's preceded by an \de{anti aliasing filter} $H_a(\Omega)$, a low-pass filter that stops frequencies above the Nyquist one in order to avoid (or at least reduce) the aliasing problem.
 		
-		Consequently to the sampler we need to have a \de{ZOH} Zero Order Hold filter that allows to put a constant output and refresh the out (setting it equals to the input) every sampling period $T_s$. To complete the description of the analog-digital conversion we also need a quantizer block (to discretize the analog function in the values range) and an encoding block that determines a digital output. 
+		Consequently to the sampler we need to have a \de{ZOH} Zero Order Hold filter that allows to put a constant output and refresh the out (setting it equals to the input) every sampling period $T_s$ in order to allow the proper ADC to perform correctly his operation; this step should also avoid the \textit{shocking} of the transients associated to the switch commutations. To complete the description of the analog-digital conversion we also need a quantizer block (to discretize the analog function in the values range) and an encoding block that determines a digital output. 
 		
 		\begin{figure}[bht]
 			\centering
 			\includegraphics[width=10cm]{adc-steps}
 			\caption{composing block of a analog digital converter unit.}
 		\end{figure}
-	
 		
+		In a practical way the operation of continuous to discrete conversion and zero order hold filter is done by the circuit called \de{simple \& hold amplifier SHA} modelled as in figure \ref{fig:conv:samplehold}.
+		
+		\begin{SCfigure}[2][bht]
+			\centering
+			\includegraphics[width = 8cm]{samplehold}
+			\caption{possible implementation of an electrical sample\&hold amplifier. }
+			\label{fig:conv:samplehold}
+		\end{SCfigure}
 	
+		This kind of circuit implementation resembles a low pass electrical filter; ideally while the sampling signal $v_c$ is one them the exit $v_y$ is equal to the input voltage $v_x$, while when $v_c=0$ the exist remains constant (hold operation) due to the constant charge of the capacitor. The time necessary to charge the capacitor $C_h$ is ideally negligible, but in reality we have to considered that  the on time should allow to charge the capacity in order to avoid spectral distortions. In real world application we have also to take into account that $C_h$ will discharge naturally over time due to parasitic currents.\\
+		While designing this circuit we have to choose a $C_h$ value that's a trade off: low values of $C_h$ decrease the time required to charge the capacitor but also increase the current leak (it discharges quickly).
+		
+\section{Quantization and codification}
+	At this point, with a sample \& hold amplifier, we have a constant sample for a time $T_s$ and it's signal is passed to the quantizer block that, in combination with the coder, determines the proper \textbf{analog to digital} converter.
 	
+	The \textbf{quantizer} block is used to discretize the signal value into a specified set of values that can be consequently \textbf{coded} into a digital signal. By an electrical point of view this operations are usually performed together.	
 	
+	While quantizing, given a range $[V_{min},V_{max}]$ of the input signal we can divide this range into separate intervals $I_k = (T_{k-1},T_k]$ (where $T_k$ is the $k$-th quantization threshold value on the horizontal axis) that's related to a code bin $Q_k$ wide $T_k - T_{k-1}$. We refer to \textbf{quantization levels} the \textit{response} of the stair-case function to the input (so measured on the vertical axis).
 	
+	\begin{SCfigure}[2][bht]
+		\centering
+		\includegraphics[width=6cm]{quantization}
+		\caption{graphical representation of the stair-case function that determine the quantization of a signal.}
+	\end{SCfigure}
 	
+	The quantization level is of course related to the digital implementation of the system: given a $b$ bits system the number of levels (equals to the digital combination of the signal) allowed are $2^b$. This means that the quantization thresholds have to be $2^b-1$.  
+	
+	If the range of quantization is symmetric (like $[-F_s,F_s]$) than the quantizer is called \textbf{bipolar}; we refer the system as \textbf{unipolar} when the quantization happens only for positive voltages as $[0,F_s]$. In general we consider uniform quantization steps.
+
+	Considering that the quantization step $\Delta$ can be computed as
+	\[ \Delta = \begin{cases}
+		\frac{2F_s}{2^b} = \frac{F_s}{2^{b-1}} \qquad & \textrm{bipolar} \\
+		\frac{F_s}{2^b} & \textrm{unipolar}
+ 	\end{cases} \]
+ 	and so the resolution is exponentially related to the bit number used to code the signal.
+ 	
+ 	\begin{SCfigure}[2][bht]
+ 		\centering
+ 		\includegraphics[width=6cm]{quanterror}
+ 		\caption{quantization error computed as the difference between the real value and the quantized one considering a rounding system.}
+ 	\end{SCfigure}
+	
+	The error of the quantization has a range of maximum $\Delta$ and we can have a rounding system (the quantization error $e_q$ is spaced in the range $[-\frac \Delta 2, \frac \Delta 2]$) or a truncated/flooring one (where $e_q \in [0,\Delta]$). This quantization error is a random process and it's a matter of modelling of the quantizer block. Considering in fact that the quantizer block $Q(\cdot)$ is a non linear system, all the theory studied until now collapses and can lead to instabilities in the random processes; however usually the error $e_q$ is small (considering that the number of bits $b$ is increasing, lowering so $\Delta$) and so it can be neglected. With this assumption the quantization error can be considered as a strict sense stationary random process assumed as a white noise with correlation $C(x(t),e_q(t)) = 0$ negligible and with a probability density function with a uniform distribution:
+	\[ f(e_q) = \begin{cases}
+		\rect_{\Delta}(0) \qquad &\textrm{rounding} \\
+		\rect_{\Delta}(\Delta/2) \qquad &\textrm{truncation} 
+	\end{cases} \]
+	
+	Considering the error $e_q$ as a  random process we can compute it's mean value $\mu_e$, variance $\sigma_e^2$ and power $P_e$ as
+	\begin{align*}
+		\mu_e &= 0 &\sigma_e^2 &= \frac{\Delta^2}{12} & P_e =  \frac{\Delta^2}{12} &  &&\textrm{rounding} \\
+		\mu_e &= -\frac{\Delta}{2} & \sigma_e^2 &= \frac{\Delta^2}{12} & P_e =  \frac{\Delta^2}{3} &  &&\textrm{truncation} 
+	\end{align*}
+	We can see that the power of a truncation system is 4 times as large as the power of the rounding counterpart.
+	
+	\paragraph{Signal-to-noise and quantization ratio} The \textbf{signal-to-noise and quantization ratio} $SQNR$ (usually expressed in decibel) is a parameter that allows to compare the variance of the quantization error respect to the original signal and so
+	\[ SQNR := \frac{P_x}{P_e}  \quad \xrightarrow[\textrm{rounding}]{dB} \quad 10 \log_{10}\left(\frac{\sigma_x^2}{\sigma_e^2}\right) = 10 \log_{10}\left( \sigma_x^2 \frac{3}{F_s^2}2^{2b} \right)\]
+	\[ \Rightarrow \quad SQNR_{dB} \approx 6.02b + 20 \log_{10} \sigma_x + 20 \log_{10}\left(\frac{\sqrt 3}{F_s} \right) \]
+	This means that for each bit $b$ added on the quantization level, the potential improvement of signal-to-noise ratio if of about $6dB$.
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
+		
 	
 	
 	
