@@ -1,5 +1,5 @@
 \chapter{Sampling and A/D conversions}
-\section{Impulse response}
+\section{Impulse response} \label{sec:impulseresponse}
 	In order to analyse time invariant linear systems an useful analyses is the one of the \de{impulse response} $h(t)$ (in the continuous time case, while $h(n)$ for the discrete one) defined as 
 	\begin{equation}
 		h(\cdot) = T\big\{ \delta(\cdot) \}
@@ -170,37 +170,209 @@
 	\paragraph{Signal-to-noise and quantization ratio} The \textbf{signal-to-noise and quantization ratio} $SQNR$ (usually expressed in decibel) is a parameter that allows to compare the variance of the quantization error respect to the original signal and so
 	\[ SQNR := \frac{P_x}{P_e}  \quad \xrightarrow[\textrm{rounding}]{dB} \quad 10 \log_{10}\left(\frac{\sigma_x^2}{\sigma_e^2}\right) = 10 \log_{10}\left( \sigma_x^2 \frac{3}{F_s^2}2^{2b} \right)\]
 	\[ \Rightarrow \quad SQNR_{dB} \approx 6.02b + 20 \log_{10} \sigma_x + 20 \log_{10}\left(\frac{\sqrt 3}{F_s} \right) \]
-	This means that for each bit $b$ added on the quantization level, the potential improvement of signal-to-noise ratio if of about $6dB$.
+	This means that for each bit $b$ added on the quantization level, the potential improvement of signal-to-noise ratio if of about $6dB$. In general, in order to have a proper number of bits (to have a low quantization error) we can consider the expression
+	\begin{equation}
+		b = \frac 1 2 \log_2 \left(\frac{\sigma_x^2}{\sigma_e^2}\right)
+	\end{equation}
+		
+	In general the original signal $\hat x$ can be described by a quantized signal $x$, and error $e_q$ due to quantization, and error $e_\omega$ due to external noises and ADC imperfection and so
+	\[ \hat x(n) = x(n) + e_q(n) + e_\omega(n) \qquad \Rightarrow \quad SNR = \left(\log_2 \frac{\sigma_x^2}{\sigma_e^2+\sigma_\omega^2}\right) < SQNR \]
+	where $SNR$ is the \de{signal noise ratio} and consider all the errors as a uncorrelated noises (modelled so as white) that's more gaussian distributed than uniform. The fact that the two noise sources $e_q,e_\omega$ are statistically independent, then while computing the $SNR$ we can simply add the two variances (because their correlation is zero). In this case the $ENOB$, the \de{effective number of bits}, can be computed as
+	\begin{equation}
+		ENOB = b_e = \frac 12 \log_2 \frac{\sigma_x^2}{\sigma_e^2+\sigma_\omega^2}
+	\end{equation}
+	In general an ADC can be constructed with a $16bit$ quantization, but if the $ENOB$ (that depends on the frequency) is lower (like $12bit$), then the last significant bits (in this case $4bit$) are \textit{meaningless} because they are affected by the ADC noises.
+		
+\section{Technology implementations of ADC's}
+	In general analog to digital converters are classified in categories depending on their technology implementation and the performance that they can achieve. In general for high resolution, the sample rate is low, while if the samples needed are very high, the resolution drops. As a rule of thumb when decreasing the nominal resolution by a bit, the sampling frequency that can be achieved doubles.
+	
+	\begin{SCfigure}[1][bht]
+		\centering
+		\includegraphics[width=6.5cm]{adc-families}
+		\caption{families of analog to digital converters with associated performance as sample per second ($x$ axis) and resolution bits ($y$ axis).}
+	\end{SCfigure}
+
+	In mechatronics applications usually are used successive approximations ADC (or one with similar properties) because they have the best trade-off in terms of frequency and resolution.
+	
+	\subsection*{Flash ADC}
+		The \de{flash ADC} is the fastest family of analog to digital converter and, as we can see in figure \ref{fig:conv:flash}, it consists in 3 main stage: the first determined by the resistor, the second composed by synchronized comparators and the last digital codification section.
+		
+		\begin{SCfigure}[2][bht]
+			\centering
+			\includegraphics[width=4cm]{flash-adc}
+			\caption{implementation of a $3bit$ flash analog to digital converter.}
+			\label{fig:conv:flash}
+		\end{SCfigure}
 		
 		
+		Referring to the figure $V_r$ and $-V_r$ are the $F_s$ and $-F_s$ till now defined. $T_i$ are representing the various voltage threshold (due to the fact that the series of resistor determines a voltage divider). The first resistor (and the last) has a value of $R/2$ due to have a rounding ADC (and not a truncation one): in fact we can see that the $0$ value threshold is in the middle of the quantization range as we can see in figure \ref{fig:conv:flashsteps}. $\Phi$ is the signal that enable the comparator (if not active the output is fixed).
 		
+		\begin{SCfigure}[1][bht]
+			\centering \includegraphics[width=7cm]{flash-adc-range}
+			\caption{ideal quantization of the flash analog to digital converter.}
+			\label{fig:conv:flashsteps}
+		\end{SCfigure}
 		
+		This kind of implementation limits the resolution of the ADC (as number of bits $b$) because the number of required comparator (and the digital codification logic) is equal to $2^b-1$. This kind of implementation also present a high power consumption and increasing the resolution the uncertainties sources become predominant in the conversion itself.
 		
+\section{Digital to analog converter}
+	In the ideal case the \textit{black box} that determines the conversion is just a pure reconstruction of the discrete signal in the continuous domain. Defining $y(n)$ as the discrete sequence to be reconstructed to a continuous signal $y_c(n)$ given a constant time $T_s$ then we can see that
+	\[ Y(\Omega) = Y(e^{j\Omega T}) = \frac 1 T \sum_{k=-\infty}^\infty Y_c\left(\Omega - \frac{2\pi k}{T}\right) \]
+	We can see that, as for the analog to digital conversion, the reconstructed spectrum of the signal present the copies with multiplicity $2\pi/T$. In this case for reconstructing a signal it's important to introduce an ideal low-pass reconstruction filter $H_r$ defined as
+	\[ H_r(\Omega) = \begin{cases}
+		T \qquad & |\Omega|\leq \frac \pi T \\ 0 & \textrm{otherwise}
+	\end{cases} \qquad \Rightarrow \quad Y_c(\Omega) = H_r(\Omega) Y(\Omega) \]
+	Representing the result in the time domain we can see that
+	\begin{equation}
+	\begin{split}
+		y_c(t) & = \frac 1 {2\pi} \int_{-\pi/T}^{\pi/T} T \, Y(\Omega) e^{j\Omega t}\, dt = \frac T{2\pi}  \int_{-\pi/T}^{\pi/T} \left(\infsum y(n) e^{-j\Omega nT} \right) e^{j\Omega t}\, dt \\ & = \infsum y(n) \frac T{2\pi} \int_{-\pi/T}^{\pi/T} e^{j\Omega(t-nT)}\, d\Omega \\
+		& = \infsum y(n) \, \sinc\left( t - nT \right)
+	\end{split}
+	\end{equation}
+	With this expression it's possible to see that $y_c(n)$ is made just of the $n$-th component of the discrete value $y(n)$. In general we can see that the digital to analog conversion is kind of interpolation of the original signal as a cardinal sine function.
 		
+	\paragraph{Real digital to analog converter} Considering a real implementation of a digital to analog converter we must introduce a zero order hold filter between the decoder and the low pass reconstruction filter; in general the decodification and the ZOH are typically implemented together. \\
+	The decoder is used to transform a digital binary number into a corresponding voltage. The zero order hold filter is instead used to re-introduce the concept of time from a discrete sequence of binary codes (in fact the time distance between this digital signals is unknown).
 		
+	\begin{SCfigure}[2][bht]
+		\centering \includegraphics[width=8cm]{DAC-scheme}
+		\caption{section that usually determines a digital to analog converter.}
+	\end{SCfigure}
+
+	Considering that $y_h(t)$ is the signal out of the sample and hold filter, the result is a staircase function that can be regarded as
+	\begin{align*}
+		y_h(t) & = \infsum y(n) \,\rect_T\left(t-\frac T2 - nT\right) = \infsum y_c(nT) \,\rect_T\left(t-\frac T2 - nT\right) \\
+		& = y_c(t) \left[ \rect_T\left(t-\frac T2\right)*\infsum \delta(t-nT) \right]
+	\end{align*}
+	The representation of this signal in the frequency domain can be described as
+	\begin{align*}
+		Y_h(\Omega) & = Y_c(\Omega) * \left[ T \sin \left(\frac{\Omega T}{2}\right) e^{-j\Omega \frac T2} \cdot \frac 1 T \sum_{k=-\infty}^\infty \delta\left(\Omega - \frac{2\pi k}{T}\right) \right] \\
+		& = \underbrace{\frac 1 T \sum_{k=-\infty}^\infty \delta\left(\Omega - \frac{2\pi k}{T}\right)}_{= Y(\Omega) = Y\left( e^{j\omega} \right) } T \,\sinc\left( \frac{\Omega T}{2} \right) e^{-j\Omega \frac T2} \\
+		& = Y(\Omega) T\, \sinc \left(\frac{\Omega T}2\right) e^{-j\Omega \frac T 2} 
+	\end{align*}
+	The zero order hold is used so to reconstruct the signal (but it introduce some distortions) while steal attenuating the spectral replicas. Considering that this filter introduces an attenuation at the end of the required frequency, that introduces the fact that the low pass reconstruction filter can be less ideal with less stiffer transients. In reality to compensate for the ZOH error the filter should be
+	\[ \hat H_r(\Omega) = \begin{cases}
+		\frac{T}{H_h(\Omega)} \qquad & |\Omega| \leq \frac \pi T \\ 0 & \textrm{otherwise}
+	\end{cases} \]
+	
+	\subsection{Technology implementations}
+		In case of digital to analog converter there is less variety of components and so implementations families. An example is the \textbf{binary weighted voltage} DAC that uses $n$ resistor in parallel with ratio between successive components of $\frac 1 2$ that are all inputs of an inverting amplifier (constructed with the op-amp) that sums the necessary values. Considering that the current $I_n$ through the $n$-th resistor is
+		\[ I_n = \frac{V_r}{R / 2^{n-1}} \]
+		and so the output voltage is equal to
+		\[ V_{out,i} = \frac{-R_r}{R_{i}} V_{i} \qquad \Rightarrow \quad V_{out, tot} =  - R_r \frac{V_r}{R} \sum_{n=1}^b b_n 2^{n-1} \]
 		
+		\begin{SCfigure}[2][bht]
+			\centering \includegraphics[width=5cm]{binary-dac}
+			\caption{general implementation of a binary-weighted voltage digital to analog converters.}
+		\end{SCfigure}
 		
+		The problem of this implementation is that building (with precision) the values of resistor between $R$ and $R/2^{b-1}$ (considering the exponential law) and so the number of bits is limited to $6-8$.		A solution to this problem is by using a \textbf{R-2R ladder network} DAC as in figure \ref{fig:conv:r2r}.
 		
+		\begin{SCfigure}[1][bht]
+			\centering \includegraphics[width=6cm]{r-2r}
+			\caption{implementation of a R-2R ladder network digital to analog converter.}
+			\label{fig:conv:r2r}
+		\end{SCfigure}
 		
+		For every stage we can see that the equivalent resistor $R_{eq}$ is equal to $2R$ and so every section is a perfect current divider of a value 2: every node bisect so the current.
 		
+		\begin{SCfigure}[2][bht]
+			\centering \includegraphics[width=4cm]{r-2r-stage}
+			\caption{$i$-th stage of the R-2R ladder network DAC.}
+		\end{SCfigure}
+
+\section{Multi rate signal processing}
+	Until now we referred to signal conversion with constant sampling frequency $f_s = 1/T_s$, but in general it's possible to have a variable value, and in this case we refer to the \de{multi rate signal processing}; in particular in this section we analyse signals subjected to
+	\begin{itemize}
+		\item \textbf{undersampling} (also associated to the \textit{decimation}), so when the new sampling period $T_s'$ is a multiple of the original sampling period
+		\[ T_s' = M T_s\qquad M\in\mathds N \]
+		\item \textbf{upsampling} when the new sampling period is a fraction of the starting value and so
+		\[ T_s' = \frac{T_s}{L} \qquad L \in \mathds N \]
+	\end{itemize}
+	
+	\paragraph{Undersampling (decimation)} Performing an undersampling (or similarly a decimation) determines that for a digital time signal $x(n)$, only one sample out of $M$ is chosen and so determines the new sequence $x_d(n)$ such that
+	\[ x_d(n) = x(nM) \]
+	In block diagrams this operation is done by the \textit{compressor} (figure \ref{fig:conv_compressor}).
+	\begin{SCfigure}[2][bht]
+		\centering \includegraphics[width=6cm]{compressor}
+		\caption{compressor as block diagram for describing an undersampling.} \label{fig:conv_compressor}
+	\end{SCfigure}
+	 
+	The spectral representation of the undersampled signal is related to the original one and in fact we can see
+	\begin{align*}
+		X_c' (\Omega) = X_d\left(e^{j\omega T_s'}\right) & = \frac 1 {T_s'} \sum_{k=-\infty}^\infty X_c\left(\Omega - \frac{2\pi k}{T'_s}\right) \\
+		& = \frac{1}{MT_s}\sum_{k=-\infty}^\infty X_c\left( \Omega - \frac{2\pi k}{MT_s} \right)	
+	\end{align*}
+	In the first line we can see that the undersampled signal can be considered as a standalone transform of the original continuous time signal $x_c$, however considering the second line we can see the relation with the transform of the signal with sampling period $T_s$: in fact the decimated signal presents replicas that rescales each with a factor $1/M$ on the frequency axis. In general undersampling a signal is like doing a brand new conversion with a different sampling period $T_s'$ that determines a new spectrum (and in this case the spectral replicas can be closer and introduce the phenomena of aliasing.)
+	\begin{SCfigure}[2][bht]
+		\centering \includegraphics[width=6cm]{downsampling}
+		\caption{original spectral response of a signal sampled with period $T_s$ (upper) and response of the signal considering an undersampling with $M=2$ (down).}
+	\end{SCfigure}
+
+	This principles are demonstrated for real evaluated signals, however the same can be said for the discrete time fourier transform where in fact the spectral replicas are placed every $\omega = 2\pi$:
+	\[ X_d(e^{j\omega}) = \frac 1 {MT_s} \sum_{k=-\infty}^\infty X_c\left( \frac{\omega}{MT_s} - \frac{2\pi k}{MT_s}\right) \]
 		
+	In general the consequence of undersampling is a loss of information and that can lead to the aliasing problem (but in same cases this operation has a functional use).
 		
+	Combining the compressor with previously a low pass filter with cut-off frequency at $\omega_c = \pi/M$ (in order to avoid the aliasing) determines the block diagram of the \textbf{decimator}.	
+	
+	\paragraph{Upsampling (interpolation)} Considering an initial sequence $x(n)$, simply increasing the sampling period $T_s'$ (to have an upsampling) by a factor $L$ (respect to $T_s$) it means that we need to add new samples (in order to add new information) that in general means adding a value of zero in each new samples generated. After this operation we want to perform an interpolation to modify this zero values into a \textit{more correct} value of the sampled signal considering (as the name suggest) an interpolation.
 		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
-		
+	In block diagram the upsampling is represented by the expander (to create the upsampled signal with the zeros) and a low pass filter that does the work of the interpolator.
+		\begin{SCfigure}[2][bht]
+			\centering \includegraphics[width=6cm]{upsampling}
+			\caption{block diagram representation to do an upsampling by using an expander and an interpolator.}
+		\end{SCfigure}
+	
+	With this representation we can note that the expanded signal $x_e$ can be described as
+	\[ x_e(n) = \begin{cases}
+		x(n/L) \qquad &n = 0,\pm L,\pm 2L,\dots \\ 0 & \textrm{otherwise}
+	\end{cases} \]
+	and so by computing the discrete time fourier transform we obtain
+	\begin{align*}
+		X(e^{j\omega}) &= \frac 1 {T_s} \sum_{k=-\infty}^\infty X_c\left(\frac \omega {T_s} - \frac{2\pi k}{T_s}\right) \\
+		X_e(e^{j\omega}) &= \infsum x_e(n) e^{-j\omega n} = \sum_{k=-\infty}^\infty x(n) e^{-j\omega k L} = X(e^{j\omega '}) \\
+		& = \frac 1 {T_s} \sum_{k=-\infty}^\infty X_c \left( \frac{\omega'}{T_s} - \frac{2k\pi}{T_s} \right) = \frac 1 {LT_s'} \sum_{k=-\infty}^\infty X_c \left( \frac{\omega}{T_s'} - \frac{2\pi k}{LT_s'} \right)
+	\end{align*}
+	where $\omega' = L \omega$. From the graphical point of view, the original sampled sequence and the upsampled one presents the same magnitude but the spectral replicas are no longer located at a distance $T_s$, but at a value $T_s/L$ and the replicas are compressed by a factor $L$.
+		\begin{SCfigure}[2][bht]
+			\centering \includegraphics[width=6cm]{upsampling-graph}
+			\caption{original spectrum due to the sampling of a signal (upper) and upsampled spectrum (bottom) of the same signal with a value $L=2$.}
+			\label{fig:conv:upsampling}
+		\end{SCfigure}
+	
+	In general the difference between the upsampled signal and a pure sampling with period $T_s'$ is that $X_e$ has a magnitude reduces by a factor $L$ and present in a frequency range of $2\pi/T_s'$ presents $L$ spectrum replicas (while the pure sampled signal would have presented just one replica). As we can see in figure \ref{fig:conv:upsampling}, the presence of the interpolator block that deletes the unwanted replicas of the spectrum due to the upsampling, so the grey replicas. In order to do this operation correctly interpolator should be a low pass filter with a gain of $L$ and a cut-off frequency of $\pi/L$.
+	
+	In the time domain the ideal interpolation relies on a noncausal $\sinc$ function, in fact
+	\[ h_i(n) = \frac{\sin\left( \frac{\pi n}{L}\right)}{\frac{\pi n}{L}} \]
+	The simplest method to achieve the goal of a good interpolation is using a linear filter one as described in figure \ref{fig:conv:lininterp}
+	
+	\begin{SCfigure}[2][bht]
+		\centering \includegraphics[width=5cm]{lin-interp}
+		\caption{time response of a linear interpolator.} \label{fig:conv:lininterp}
+	\end{SCfigure}
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
 		
 		
 	
