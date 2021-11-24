@@ -60,17 +60,51 @@
 	Considering that also the input $x(n)$ as a finite number $L$ of samples, then the length of the convolution $y(n)$ will be different from zero for $n=0,\dots, L+P-2$ (and so it present $L+P-1$ samples). In general a way to solve this kind of problem can be solved in the frequency domain. Considering the discrete time Fourier (DTFT) transform $\F$, known the transforms $H(e^{j\omega}), X(e^{j\omega})$ of the system impulse response and input sequence, than the output can be computed as
 	\[ Y(e^{j\omega}) = H(e^{j\omega}) X(e^{j\omega}) \qquad \xrightarrow{\mathscr{F}^{-1}} \quad y(n) \]
 	In general this operation using the \dft (DFT), that's practically what happens, is more complex. Given the two discrete transform $X(k),H(k)$ of both the input and the impulse response, we can compute the output frequency response $Y(k) = H(k) X(k)$ that can be inverted to $y(n)$. In order to do perform this operation correctly (and not losing information due to time aliasing) the two transform have to be computed doing a zero padding for $x(n)$ with $P-1$ zero and a padding of $L-1$ zero for $h(n)$: in this case we are sure that the product $X(n)H(n)$ has a number of samples $N = L+P$ that's greater than the $L+P-1$ due to the convolution.
+
+\section{Fast Fourier transform}
+	The \de{\fft}, as already stated, is not the same as the \dft but represent a class of algorithms that are implemented to compute the Fourier transform in a \textit{faster} way (by doing less mathematical computation than the original statement).
+	
+	Starting from the definition on page \pageref{eq:ft:dft} of the \dft we can see that to determine the spectrum we need to perform $N-1$ complex addition and $N$ complex multiplications for each spectral sample, and so the full number of operation to perform is
+	\[ N(N-1) \textrm{ complex addition} \quad + \quad N^2 \textrm{ complex multiplication} \]
+	Considering that computers can't handle complex number but only real values, it means that one complex multiplication corresponds to 4 multiplications and 2 additions in the real domain (and one complex addition corresponds to 2 real additions). We can see that in general the order of complexity of the \dft is equal to
+	\[ \mathcal O \big(N^2\big)\]
+	
+	The \fft allow to reduce the order of complexity of the operation op to the value $\mathcal O \big(N \log_2 N\big)$ (that's the ideal target value for all the algorithms) then $N$ is a power of 2, and so can be rewritten as $N = 2^\nu$ with $\nu \in \mathds N$. When this conditions is not met, usually the input sampled signal is subdivided in sequences that met the condition, perform the FFT and then recombine the result.
+	
+\subsection{Decimation in time FFT}
+	The basic idea of the \de{decimation in time} DIT \fft algorithm is to recursively decompose the original DFT into more transforms with smaller number of points obtained through bisection.
+	
+	Considering for example the sequence $x(n) \neq 0$ for $n=0,\dots, N_1$ with $N = 2^\nu$, we can compute two subsequence determined by the sample in even $x_e$ and odd $x_o$ positions, having $N/2$ samples each:
+	\[ \underbrace{x(0),x(2),\dots,x(N-2)}_{x_e(n) = x(2r)} \qquad \underbrace{x(1), x(3),\dots, x(N-1)}_{x_o(n) = x(2r + 1)}  \]
+	
+	Based on the definition (eq. \ref{eq:ft:dft}) of the \dft, we can compute the transform as
+	\[ X(k) = \sum_{n=0}^{N-1} x(n) W_N^{kn} = \sum_{r=0}^{\frac N 2 - 1 } x(2r) W_N^{2rk} + \sum_{r=0}^{\frac N 2 - 1} x(2r+1) W_N^{(2r+1)k} \]
+	where $W_N = e^{-j\frac{2\pi}{N}}$ is the twiddle factor. We can see that $W_N^2 = W_{N/2}$, in fact
+	\[ W_N^2 = e^{-j\frac{2\pi}{N} 2 } = e^{-j\frac{2\pi}{N/2} } = W_{N/2} \]
+	and so the previous expression can be rewritten as
+	\[ \begin{aligned}
+		X(k) & =  \sum_{r=0}^{\frac N 2 - 1 } x_e(r) W_{N/2}^{rk} + W_{N}^k  \sum_{r=0}^{\frac N 2 - 1 } x_o(r) W_{N/2}^{rk} \\ & = X_e(n) + W_N^k X_o(k)  
+	\end{aligned} \qquad \qquad \qquad k = 0,\dots,N-1\]
+	We can now see that the first sum corresponds to the \dft of the original signal computed only on the even position of $x(t)$, while the second sum corresponds to the odd elements. We can see that computing the transforms $X_e(k),X_o(k)$ requires a number of operation proportional to $(N/2)^2 = N^2/4$, requiring so $1/4$ of the original operations to perform the \textit{pure} transform $X(k)$. If we neglect the time computation of performing the addiction of $X_e+X_o$, than the overall number of operation is
+	\[ X_e(k) + X_o(k) \propto \frac{N^2}{4} + \frac{N^2}{4} + N = \frac{N^2}{2} + N \leq N^2 \]
+	where the last inequality is always verified for $N>2$.
+	\begin{SCfigure}[2][bht]
+		\centering \includegraphics[width=6cm]{fft-dec-graph}
+		\caption{graph representing the computation that are needed to be performed to compute the fast Fourier transform using the decimation in time algorithm for $N=8$ samples.}
+	\end{SCfigure}
 	
 	
+	By applying recursively this concept for sequences until we reach input signals of 2 samples each, the overall computational complexity of the \dft  drops from $\mathcal O(N^2)$ to $\mathcal O(N\log_2N)$.
+	\begin{SCfigure}[2][bht]
+		\centering \includegraphics[width=4cm]{fft-dec-graph-bin}
+		\caption{graph representation of the \fft using the decimation in time algorithm computed on 2 points.} \label{fig:dft:ditsing}
+	\end{SCfigure}
 	
-	
-	
-	
-	
-	
-	
-	
-	
+
+	\begin{SCfigure}[2][bht]
+		\centering \includegraphics[width=7cm]{fft-dec-graph-comp}
+		\caption{complete graph representing the computation to do with the decimation in time algorithm for $N=8$ samples. The transform of 2 value is shown in figure \ref{fig:dft:ditsing}.}
+	\end{SCfigure}
 	
 	
 	
