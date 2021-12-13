@@ -175,13 +175,13 @@
 		\end{align*}
 		\end{proof}
 		An important corollary to this property is the \textbf{Parsevals's theorem} that states that given two signals $x,y$, than it happens that
-		\begin{equation}
+		\begin{equation} \label{eq:four:parserval}
 			\four{\int_{-\infty}^\infty x(t) y^* (t)\, dt} = \frac 1 {2\pi} \int_{-\infty} ^\infty X(\Omega) Y^*(\Omega)\, d\Omega
 		\end{equation}
 		This is useful because if we calculate $\int_{-\infty}^\infty x(t)x(t)\, dt$ we get that the energy of the signal can be calculated also in the frequency domain.
 		
 		 \paragraph{Correlation} To measure the \textit{similarity} (in the time domain) of two signals $x,y$ it's possible to use the \textbf{correlation operator} $\otimes$ defined as follows:
-		\begin{equation}
+		\begin{equation} \label{eq:four:autocorrelation}
 			x(t) \otimes y(t) = \int_{-\infty}^\infty x(\tau) y^*(t+\tau)\, d\tau = x(t)*y^*(-t) 
 		\end{equation}
 		Note that in general if we calculate the correlation between the same function ($x\otimes x$), that measures the \textbf{autocorrelation}.

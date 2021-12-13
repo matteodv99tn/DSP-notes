@@ -274,8 +274,10 @@
 	\[ \phi_{XY}(t_1,t_2) = \phi_{XY} (\underbrace{t_1-t_2}_{=\tau}) \]
 	
 	\paragraph{Wide sense stationary random processes in the frequency domain} In the frequency domain is possible to retrieve information of the random process by computing the Fourier transform of the correlation function (and this is true only for wide sense stationary processes), and so determining
-	\[ \Phi_X(\Omega) = \intinf \phi_x(\tau) e^{-j\Omega t}\, dt \] 
-	Due to the fact that $\phi(\tau)$ is an even function, than $\Phi_X(\Omega)$ is a pure real function and11 is also positive ($\Phi_X(\Omega) \geq 0$). In particular $\Phi_X$ is always referred as \de{power spectral density}; we can in fact see that $\phi_X(0) = P_X$ defined as
+	\begin{equation} \label{eq:prob:psd}
+		 \Phi_X(\Omega) = \intinf \phi_x(\tau) e^{-j\Omega t}\, dt
+	\end{equation} 
+	Due to the fact that $\phi(\tau)$ is an even function, than $\Phi_X(\Omega)$ is a pure real function and is also positive ($\Phi_X(\Omega) \geq 0$). In particular $\Phi_X$ is always referred as \de{power spectral density}; we can in fact see that $\phi_X(0) = P_X$ defined as
 	\[ \phi_X(\tau)= \frac 1 {2\pi} \intinf \Phi_X(\Omega) e^{j\Omega \tau} \, d\Omega \qquad \xrightarrow{\tau = 0} \quad P_X = \frac 1 {2\pi} \intinf \Phi_X(\Omega) \, d\Omega \]
 	This expression allows also to understand at which frequency the signal presents more components.
 	
