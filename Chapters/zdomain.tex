@@ -1,0 +1,125 @@
+\chapter{System analysis in the $\Z$ domain}
+	Until now to describe a discrete-time linear time-invariant system in the time domain two dual alternatives were presented:
+	\begin{itemize}
+		\item using the impulse response $h(n)$ of the system and so computing the output as the convolution of the input $y(n) = x(n) * h(n)$;
+		\item using linear and constant difference equations (obtained by the discretization of the differential operator) in the form
+		\[ \sum_{k=0}^N a_k \, y(n-k) = \sum_{k=0}^M b_k\, x(n-k) \]
+		As the impulse response $h(n)$ can univocally define a system, similarly the set of coefficients $a_k,b_k$ represent an \textit{identity card} of the system in the same way.
+	\end{itemize}
+	
+	It will be shown that this two representation can be \textit{merged} and equally considered by doing an analyses in the $\Z$ domain.
+	
+\section{The $\Z$ transform}
+	The \de{$\Z$ transform} is similar to the Laplace one and allow to describe a sequence $x(n)$ in a domain described by the complex variable $z\in \mathds C$; in particular the definition of the $\Z$ transform is
+	\begin{equation}
+		X(z) = \Z\left\{ x(n) \right\} : = \sum_{n=-\infty}^\infty x(n) z^{-n} \qquad \qquad z \in \mathds C
+	\end{equation}
+	It's important to define for this kind of problem the \de{region of convergence} $ROC$ as the subset of the complex plane $\mathds C$ on which the $\Z$ transform converges to a finite value.
+	
+	\paragraph{Example of $\Z$ transforms} Given the exponential sequence $x(n) = a^n$ it's easy to see that the region of convergence coincide with the empty set, in fact if $a>1$ the sum diverges for positive values of $n$ (and vice-versa for $0<a<1$ the sum diverges for negative $n$).
+	
+	To avoid the problem of having an empty region of convergence is using the \de{causal} exponential sequence defined as $x(n) = a^nu(n)$. Applying the definition of the $\Z$ transform it's possible to compute it's spectrum
+	\begin{align*}
+		X(z) & = \sum_{n=-\infty}^{\infty} a^n u(n) z^{-n} = \sum_{n=0}^\infty a^n z^{-n} = \sum_{n=0}^{\infty} \left(\frac a z\right)^n \\ 
+		& = \frac{1}{1-az^{-1}}
+	\end{align*}
+	In this case the the sum converges to the described result if and only if the absolute value of the ratio $a/z$ is less then 1, and so the region of convergence is
+	\[ ROC = \big\{ z\in \mathds C \textrm{ such that } |z| >|a| \big\} \]
+	From a geometrical point of view, this means that the region of convergence is determined by all the point that lies outside the unit circle on the complex plane.\\
+	Considering now instead the \textbf{anti-causal} sequence defined as $x(n) = -a^n u(-n-1)$ it can be proven that it's $\Z$ transform is
+	\[ X(z) = \frac{1}{1-az^{-1}} \]
+	The resulting transform is equal to the one of the causal exponential, however what changes is the region of convergence that in this case is the inner region of the unit circle on the complex domain:
+	\[ ROC = \big\{ z\in \mathds C \textrm{ such that } |z| < |a| \big\} \]
+	
+	As we can see in this example determining the region of convergence of the transform is equally important as defining it's analytical function (because the same transform can be associated to different time sequence depending on the region of convergence).
+	
+	\paragraph{Relation with the DTFT} As a relation can be found between the Laplace transform with the continuous-time Fourier transform, the same can be said with the $\Z$ transform and the discrete-time Fourier transform: in fact the second one is simply the $\Z$ transform evaluated only on the unit circle in the complex plane, in fact
+	\begin{equation}
+		X\big(e^{j\omega}\big) = X(z) \Big|_{z=e^{j\omega}}
+	\end{equation}
+	
+	\paragraph{Inversion} To invert a $\Z$ transform it's possible to use the definition
+	\begin{equation}
+		x(n) = \frac{1}{{2\pi j}} \oint_\Gamma X(z) z^n\, dz
+	\end{equation}
+	where $\Gamma$ is any closed loop in the region of convergence routed in anti-clockwise direction.
+	
+	
+\subsection{Properties}
+	Similarly to the Laplace and Fourier transforms, also the $\Z$ transform is a \textbf{linear operator}, and so
+	\[ \Z\big\{ a \, x(n) + b\, y(n) \big\} = a \Z\big\{ x(n) \big\} + b \Z\big\{ y(n) \big\}  \qquad \qquad ROC_{x+y} = ROC_x \cap ROC_y \]
+	Note that the region of convergence of the linear combination coincide with the intersection of the $ROC$ of the summed transforms.
+	
+	Another important property is the \textbf{time shifting} one that relates the transform of a shifted signal in the time domain:
+	\[ x\big(n-n_0\big)  \quad \mapsto \quad z^{-n_0} X(z) \]
+	Usually in system's block diagram a block containing a term $z^{-d}$ means a delay of the output of $d$ samples. Also the \textbf{time reversal} property holds and so $z(-n) \mapsto X(z^{-1})$. It also holds the \textbf{multiplication} by an exponential as
+	\[ \alpha^n x(n) \quad \mapsto \quad X\left(\frac z \alpha \right) \]
+	
+	Fundamental is the \textbf{convolution theorem} that defines that
+	\[ y(n) = x(n) * h(n) \quad \mapsto \quad Y(z) = X(z)H(z) \]
+	Also the \textbf{conjugation} of the sequence holds, in fact $x^*(n) \mapsto X^*(z^*)$.
+	
+	
+\section{Transfer function}
+	In the $\Z$ domain the dual representation of discrete-time linear time-invariant system determines the following equations:
+	\[ Y(z) = X(z) H(z) \qquad \qquad \leftrightarrow \qquad \qquad \sum_{k=0}^N a_k z^{-k} Y(z) = \sum_{k=0}^M b_kz^{-k} X(z) \]
+	This representations collapses to the same dual definition of the so called \de{transfer function} $H(z)$:
+	\begin{equation}
+		H(z) = \frac{Y(z)}{X(z)} = \frac{ \sum_{k=0}^M b_k z^{-k}}{\sum_{k=0}^N a_k z^{-k}}
+	\end{equation}
+	In particular we can see that this complex evaluated function is a \textbf{rational polynomial} (this holds only for LTI systems), that so can be expressed as ratio of polynomial in $z^{-1}$. In particular if $H(n)$ is real evaluated, than it means that all the coefficients $a_i,b_i$ are also real. In particular the numerator has $M$ number of roots that are called \textbf{zeros}, while the $N$ roots of the denominator are the \textbf{poles} (and for those values the transfer function diverges because it means dividing a value by 0). \vspace{3mm}
+	
+	Considering the case with zero number of poles $N=0$, it means that the transfer function is in the form
+	\[ H(z) = \frac{\sum_{k=0}^M b_k z^{-k}}{a_0} = \sum_{k=0}^M \frac{b_k}{a_0} z^{-k} \]
+	In this case the inversion of the transfer function determines a finite impulse response of the system (in particular of $M$ sample), in fact it can be shown that the impulse response in the time domain is in the form
+	\[ h(n) = \sum_{k=0}^M b_k \delta(n-k) \] 
+	If instead the transfer function presents only poles (and so the number of zeros $M$ is null) the system of the form
+	\[ H(z) = \frac{b_0}{\sum_{k=0}^N a_k z^{-k}} \]
+	present an infinite impulse response.
+	
+\subsection{Partial fraction decomposition}
+	The fact that the transfer function is a rational polynomial in $z^{-1}$ it means that, depending on the number of zeros/poles, can be split in a polynomial and a ratio having degree of numerator less than denominator (using the polynomial division):
+	\[ H(z) = \frac{N(z)}{D(z)} = Q(z) + \frac{R(z)}{D(z)} \]
+	In particular $Q(z)$ present order $M-N$. Depending on $N,M$ the following cases can be encountered:
+	\begin{itemize}
+		\item $M=N$: proper transfer function;
+		\item $M<N$: strictly proper transfer function;
+		\item $M>N$: improper transfer function.
+	\end{itemize}
+	In this last case scenario (that can describe the above one) the transfer function can be described as
+	\[ H(z) = \underbrace{\sum_{r=0}^{M-N} B_r z^{-r} }_{Q(z)} + \frac{R(z)}{D(z)} \]
+	The underlined component, as previously seen, represent a finite sum of $M-N$ delayed pulses; if we consider the remaining rational polynomial $R(z)/D(z)$ presents $N_p$ number of distinct poles having each multiplicity $m_i$ each, then the transfer function can be rewritten consider the \de{partial fraction decomposition} whose general formulation is
+	\[ H(z) = Q(z) + \sum_{i=1}^{N_p} \sum_{k=1}^{m_i} \frac{A_{ik}}{\big(1-p_i z^{-1}\big)^k} \]	
+	The collection of the $A_{ik} \in \mathds C$ determines the \textbf{residues} of the transfer function and with the decomposition as here shown, the transfer function has been re-conducted to a sum of exponential in the time domain that for causal system (with no multiple poles) determines the following transfer function:
+	\begin{equation}
+		\xrightarrow{\Z^{-1}} \qquad \qquad h(n) = \sum_{r=0}^{M-N} B_r \delta(n-r) + \sum_{i=0}^N A_i p_i^k u(n)
+	\end{equation}
+	
+	In this case necessary and sufficient condition for the stability of a linear time-invariant causal discrete-time system is that all the poles $p_i$ must lie inside the unit circle in the complex domain.
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	
+	

@@ -1,10 +1,12 @@
-\documentclass[10pt,letterpaper]{book}
-
+\documentclass[10pt,letterpaper,oneside,professionalfont]{book}
+%\usepackage{concrete}
 \input{setup.tex}
 
 %\usepackage[defaultfam,light,tabular,lining]{montserrat}
 %\renewcommand*\oldstylenums[1]{{\fontfamily{Montserrat-TOsF}\selectfont #1}}
 
+\usepackage[defaultfam,light,tabular,lining]{montserrat}
+\renewcommand*\oldstylenums[1]{{\fontfamily{Montserrat-TOsF}\selectfont #1}}
 
 \begin{document}
 	
@@ -44,17 +46,28 @@
 	
 	\tableofcontents
 		
-	\input{Chapters/introduction.tex}	
+%	\input{Chapters/introduction.tex}	
 	
 	\mainmatter
-	\input{Chapters/fourier.tex}
-	\input{Chapters/probability.tex}
-	\input{Chapters/conversions.tex}
-	\input{Chapters/dft.tex}
+	
+	\input{Chapters/fourier-v2.tex}
+	\input{Chapters/probability-v2.tex}
+	\input{Chapters/conversions-v2.tex}
+	\input{Chapters/dft-v2.tex}
+	\input{Chapters/zdomain-v2.tex}
+	\input{Chapters/filters-v2.tex}
+%	\input{Chapters/prep.tex}
+	
+%	\input{Chapters/fourier.tex}
+%	\input{Chapters/probability.tex}
+%	\input{Chapters/conversions.tex}
+%	\input{Chapters/dft.tex}
+%	\input{Chapters/zdomain.tex}
+%	\input{Chapters/filters.tex}
 	
 	\backmatter
 	
-	\input{Chapters/probstatistic.tex}
+%	\input{Chapters/probstatistic.tex}
 	
 	
 \end{document}

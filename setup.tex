@@ -1,5 +1,6 @@
 
-\usepackage[left=4.5cm, width=14.00cm, height=21.00cm]{geometry}
+%\usepackage[left=4cm, width=15.50cm, height=23.00cm]{geometry}
+\usepackage[width=15.50cm, height=23.00cm]{geometry}
 \usepackage[english]{babel}
 \usepackage[utf8]{inputenc}
 \usepackage[T1]{fontenc}
@@ -13,7 +14,7 @@
 \usepackage{sidecap}
 \usepackage[makeroom]{cancel}
 \usepackage{capt-of}
-\usepackage{caption}
+\usepackage[margin=1cm]{caption}
 \usepackage[dvipsnames]{xcolor}
 \usepackage{xpatch}
 \usepackage{subcaption}
@@ -27,12 +28,16 @@
 \usepackage{bm}
 \usepackage{enumerate}
 \usepackage{mathrsfs} 
+\usepackage{array}
+\usepackage{arydshln}
+\usepackage{hyperref}
 
 \graphicspath{{Images/}}
 
 
 \makeindex[columns=3, title=Indice Analitico, intoc]
 
+\newcolumntype{M}[1]{>{\centering\arraybackslash}m{#1}}
 \captionsetup{font = {it, small}, labelfont={color=NavyBlue, bf}}
 
 
@@ -42,16 +47,19 @@
 \newcommand{\antifour}[1]{\mathscr{F}^{-1}\left\{ #1 \right\}}
 \newcommand{\prob}[1]{\textrm{Pr}\left\{ #1 \right\}}
 \newcommand{\intinf}{\int_{-\infty}^\infty}
-\newcommand{\infsum}{\sum_{n=-\infty}^\infty}
+\newcommand{\infsum}[1]{\sum_{#1=-\infty}^\infty}
 \newcommand{\sinc}{\textrm{sinc}}
 \newcommand{\rect}{\textrm{rect}}
-\renewcommand{\Re}{\textrm{Re}}
-\renewcommand{\Im}{\textrm{Im}}
+\renewcommand{\Re}[1]{\textrm{Re}\left\{ #1 \right\}}
+\renewcommand{\Im}[1]{\textrm{Im}\left\{ #1 \right\}}
 \newcommand{\dft}{discrete Fourier transform }
 \newcommand{\fft}{fast Fourier transform }
 \newcommand{\circconv}[1]{\underset{\text{\tiny $#1$}} \otimes}
+\newcommand{\Z}[1]{\mathcal{Z}\left\{#1\right\}}
 
-
+\newcommand{\var}[1]{\textrm{Var}\{#1\}}
+\newcommand{\dtft}{discrete-time Fourier transform }
+\newcommand{\ctft}{continuous-time Fourier transform }
 
 \newcommand{\de}[1]{\textbf{\textcolor{NavyBlue}{#1}}}
 
@@ -66,8 +74,14 @@
 
 
 \newcommand{\bfcolor}[1]{\renewcommand*{\textbf}[1]{{\bfseries {\color{#1}##1}}}}
+\newcommand{\tabrule}{\rule{\linewidth}{1pt}}
 
 \setcolumnwidth{0.3\textwidth}
+
+
+\newcounter{domande}
+\refstepcounter{domande}
+\newcommand{\newquestion}{\vspace{3mm} \noindent \rule{\linewidth}{2pt}\subsection*{Question \thedomande} \refstepcounter{domande}}
 
 
 
@@ -181,7 +195,7 @@
 \tcolorboxenvironment{proof}{
 	boxrule=0pt,
 	boxsep=0pt,
-	colback={White!90!ForestGreen},
+%	colback={White!90!ForestGreen},
 	enhanced jigsaw, 
 	borderline west={2pt}{0pt}{ForestGreen},
 	sharp corners,

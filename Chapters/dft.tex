@@ -352,11 +352,16 @@
 	\end{align*}
 	In this expression the first underlined term represent the power spectral density value that has to be estimated, while the second one is the autocorrelation $\mathcal E_w(k)$ of the window function that represent a sort of \textit{weight} in the evaluation of the expectation. Applying now to this result the Parseval's theorem (eq. \ref{eq:four:parserval}, pg. \pageref{eq:four:parserval}) the expectation can be computed as
 	\begin{align*}
-		E\left\{ \hat \Phi_V \right\} & = \frac 1 {2\pi L} \int_{-\pi}^\pi \phi_x ()e^{j\theta}) \mathcal C_w(e^{j(\omega-\theta)}) \, d\theta = \frac 1 L \phi_x (e^{j\omega}) * |W(e^{j\omega})|^2
+		E\left\{ \hat \Phi_V \right\} & = \frac 1 {2\pi L} \int_{-\pi}^\pi \phi_x (e^{j\theta}) \mathcal C_w(e^{j(\omega-\theta)}) \, d\theta = \frac 1 L \phi_x (e^{j\omega}) * |W(e^{j\omega})|^2
 	\end{align*}
 	This means that this estimator is biased by a factor $*\frac1 L |W(e^{j\omega})|^2$ depending so on the chosen window.
 	
-	
+	\paragraph{Modified periodogram} In order to consider general formulation of the window a \textbf{modified periodogram} defined as the normalization of the magnitude of the signal squared by the energy of the window signal $E_w$ and so	
+	\begin{equation}
+		\hat \Phi_V(e^{j\omega}) = \frac{1}{\sum_{i=0}^{L-1} w(n) } |V(e^{j\omega})|^2
+	\end{equation}
+	This estimator is biased (similarly as on what was shown previously) and it's also non consistent, and in fact can be shown that
+	\[ \textrm{Var}\left\{\hat \Phi_V(e^{j\omega})\right\} \propto \phi_x^2(e^{j\omega}) \]
 	
 	
 	

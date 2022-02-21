@@ -276,7 +276,7 @@
 		
 		\paragraph{Converging exponential sequence} Let's consider the exponential sequence $x(n) = a^n u(n)$ where $|a| < 1$ in order to have a convergent series; it's transform can be consider as
 		\begin{align*}
-			X\big(e^{j\omega}\big) & = \infsum a^n e^{-j\omega n} = \infsum \underbrace{\left( a e^{-j\omega} \right)^n}_{b^n} 
+			X\big(e^{j\omega}\big) & = \infsum n a^n e^{-j\omega n} = \infsum n  \underbrace{\left( a e^{-j\omega} \right)^n}_{b^n} 
 		\end{align*}
 		We can see that this can be expressed as a geometric series whose limit in general converges to
 		\[ \lim_{N\rightarrow 0} \sum_{n=0}^N b^n = \lim_{N\rightarrow 0} \frac{1-b^{N+1}}{1-b} = \frac{1}{1-b} = \frac{1}{1-ae^{-j\omega}} \]
