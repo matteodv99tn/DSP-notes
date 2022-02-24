@@ -48,11 +48,13 @@
 	While such condition is sufficient to say that a signal surely has a transform, the contrary cannot be said: there are in fact signals that are not absolutely summable but that still presents a Fourier transform.
 	
 	Considering as example the continuous-time signal $x(t)$ whose spectrum is described by a rectangular distribution $X(\Omega) = \rect_{2\Omega_c} (\Omega)$ (where $\Omega_c = 2\pi f_c$), using the definition of the inverse Fourier transform (equation \ref{eq:four:inversetransform}) we have that
-	\begin{align*}
+	\begin{equation} \label{eq:four:rectangularinvers}
+	\begin{aligned}
 		\antifour{X(\Omega)}(t) & = \frac 1 {2\pi} \int_{-\infty}^\infty X(\Omega) e^{j\Omega t}\, d\Omega = \frac 1 {2\pi} \int_{-\Omega_c}^{\Omega_c} e^{j\Omega t}\, d\Omega \\
 		& = \frac{e^{j\Omega_c t} - e^{-j\Omega_c t}}{2\pi j t} = \frac{\sin\big(\Omega_c t\big)}{\pi t} \frac{2f_c}{2f_c} = \frac{\sin\big(2\pi f_c t\big)}{2\pi f_c t} 2f_c  \\ 
 		& = 2 f_c \sinc\big(\Omega_c t\big)
-	\end{align*}
+	\end{aligned}
+	\end{equation}
 	Determined $\sinc x = \frac{\sin x}{x}$ the \textbf{cardinal sine} function (whose graph is in figure \ref{fig:four:sinc}), it can be shown that such signal is not absolutely summable, however it's transform exists (and is rectangular).
 	
 	\begin{SCfigure}[2][bt]

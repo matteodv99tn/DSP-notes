@@ -349,16 +349,16 @@
 		Table \ref{tab:dft:windowfunctions} resumes the main characteristics of some window functions; in particular we can see that (for a fixed length $L$ of the window) the side/main-lobe ratio is inversely proportional to the main-lobe width (lower $\Delta_w$ positively affects the resolution with the drawback of a higher \textit{side-lobe infiltration} impact).
 		
 		\begin{table}[bt] \centering \tabrule
-			\caption{list of possible windows with relative side to main-lobe radio (in decibels) and main-lobe width (depending on number of windowed samples $L$).}
+			\caption{list of possible windows with relative side to main-lobe radio (in decibels) and main-lobe width (depending on number of windowed samples $L$); the maximum ripple amplitude error $\varepsilon$ is also presented due to it's relevance in the digital filter design described on chapter \ref{sec:digitalfilterdesign}.}
 			\label{tab:dft:windowfunctions}
-			\begin{tabular}{M{0.25\linewidth} M {0.25\linewidth} M{0.25\linewidth} }
-				window & side/main-lobe ratio & main-lobe width $\Delta_w$\\ \hline
-				rectangular & $-13db$ & $4\pi/L$ \\
-				Bartlett (triangular) & $-25db$ & $8\pi/L$ \\
-				Hanning & $-31db$ & $8\pi/L$ \\
-				Hamming & $-41db$ & $8\pi/L$ \\
-				Blackman & $-57db$ & $12\pi/L$ \\
-			\end{tabular} \tabrule
+			\begin{tabular}{M{0.2\linewidth} M {0.2\linewidth} M{0.2\linewidth} M{0.2\linewidth} }
+				window & side/main-lobe ratio & main-lobe width $\Delta_w$ & $\varepsilon$\\ \hline
+				rectangular & $-13db$ & $4\pi/L$ & $-21dB$ \\
+				Bartlett (triangular) & $-25db$ & $8\pi/L$ & $-25dB$ \\
+				Hanning & $-31db$ & $8\pi/L$ & $-44dB$ \\
+				Hamming & $-41db$ & $8\pi/L$ & $-53dB$ \\
+				Blackman & $-57db$ & $12\pi/L$ & $-74dB$ \\
+			\end{tabular} \vspace{2mm}\tabrule
 		\end{table}
 	
 		\paragraph{Cosine class windows} The \textbf{Hanning}, \textbf{Hamming} and \textbf{Blackman} functions belongs to the \de{cosine class windows} of order $K$ whose general formulation is

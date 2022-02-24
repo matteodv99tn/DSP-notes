@@ -1,4 +1,4 @@
-\chapter{Digital Filter Design}
+\chapter{Digital Filter Design} \label{sec:digitalfilterdesign}
 	In general \de{filters} for digital signal processing are implemented in discrete-time system because, in opposition to the continuous-time one, they are easier to implement (they are in fact \textit{simple} algorithms).
 	
 	Given a causal discrete-time LTI system characterized by a impulse response $h(t)$, it's output to a sinusoidal input in the complex form $x(n) = A e^{j(\omega_0n+\phi_0)}$ is determined by the convolution
@@ -218,8 +218,123 @@
 			N = \left\lceil \frac{\ln\left( \dfrac{\sqrt{1-\delta_2^2} + \sqrt{1-\delta_2^2(1+\varepsilon^2)}}{\varepsilon\delta_2} \right)}{\ln\left( \dfrac{\Omega_s}{\Omega_p} + \sqrt{\left( \dfrac{\Omega_s}{\Omega_p} \right)^2 - 1} \right)} \right\rceil
 		\end{equation}
 		In this case the cut-off frequency of the filter coincides with the maximum pass-band frequency, so $\Omega_c=  \Omega_p$.
+
+
+\section{FIR filter design}
+	The design of \de{finite impulse response} FIR filters for discrete time system can be principally made in two ways:
+	\begin{itemize}
+		\item by constructing a proper window whose spectra effect is similar to the ideal case;
+		\item by using algorithms based on optimization in the frequency domain; usually this filter implementation (for the same length $L$ of the signal to filter) is more selective respect to the window method.
+	\end{itemize}
+	Usually this kind of filters are explicitly design to have a (generalized) \textbf{linear phase} response.
+
+	\subsection{Types of linear phase systems}
+		Considering filters designed by constructing a proper finite impulse response, we can classify such system in 4 types depending on the length of the impulse response $h(n)$ and it's symmetry, in particular we have 4 types:
+		\begin{enumerate}[I)]
+			\item $h(n) = h(M-n)$ with $M$ even;
+			\item $h(n) = h(M-n)$ with $M$ odd;
+			\item $h(n) = - h(M-n)$ with $M$ even;
+			\item $h(n) = - h(M-n)$ with $M$ odd;
+		\end{enumerate}
+		The first two types are so characterized by an axe of symmetry positioned at $M/2$ (note that for the type I such axis lies on a sample, while for type II it passes in the middle of two \textit{steps}), while for the last two there's a point symmetry (still at $M/2$).
+		
+		\paragraph{Linear phase proof} Considering a type I FIR filter, it's possible to prove it's linear phase; known it's impulse response
+		\[ h(n) = \sum_{k=0}^M b_k \delta(n-k) \hspace{2cm} \textrm{where } b_k = b_{M-k} \]
+		then it's \dtft can be computed as
+		\begin{align*}
+			H\big(e^{j\omega}\big) & = \sum_{k=0}^M b_k e^{-j\omega k} = b_{M/2} e^{-j\omega \frac M2} + \sum_{k=0}^{\frac M2 -1} b_k \left( e^{-j\omega k} + e^{-j\omega(M-k)} \right) \\
+			& = b_{M/2} e^{-j\omega \frac M2} + 2 e^{-j\omega \frac M2} \sum_{k=0}^{\frac M2 -1} b_k \left( \frac{e^{j\omega \left(\frac M2 - k\right)} + e^{-j\omega \left(\frac M2 - k\right)} }{2} \right)
+		\end{align*}
+		Knowing the Euler relation $\frac{e^{jx} + e^{-jx}}{2} = \cos x$ and performing the change of variable $m = \frac M 2 - k$ it possible to rewrite such expression as
+		\[ H\big(e^{j\omega}\big) = e^{-j\omega \frac M2} \sum_{m=0}^{\frac M2} c_m \cos (m \omega) \]
+		where
+		\[ c_0 = b_{M/2} \hspace{2cm} c_m = 2 b_{\frac M2 -m} \quad \textrm{with } m = 1,\dots, \frac M2 \]
+		Considering that the summation of cosines determines a purely real and even function, then the transfer function of the filter can be regarded as
+		\begin{equation}
+			H\big(e^{j\omega}\big) = e^{-j\omega \frac M2} A_e(\omega)
+		\end{equation}
+		where $A_e$ is a real and even function in the discrete frequencies $\omega$; the phase of such system is so
+		\[ \theta(\omega) = \omega \frac M 2 + \angle A_e(\omega) \qquad \textrm{where } \angle A_e(\omega) = \begin{cases}
+			0 \qquad & A_e(\omega) \geq 0 \\
+			\pi \qquad & A_e(\omega) < 0 \\
+		\end{cases} \]
 	
-	\subsection{Examples}
+		\paragraph{Location of the zeros} Considering the symmetric case (type I and II linear phase systems) we have that
+		\[ h(n) = h(M-n) \qquad \xrightarrow{\mathcal Z} \qquad H(z) = z^{-M} H(z^{-1}) \]
+		We can so observe that
+		\begin{itemize}
+			\item if $z_0$ is a real zero, then also $1/z_0$ is a zero of the transfer function and so zeros always comes in pairs;
+			\item if $h(n)$ is real evaluated and $z_0$ is more generally a complex zero, then also $z_0^*$, $1/z_0$ and $1/z_0^*$ are also zeros (complex-valued zeros come in quadruples);
+			\item if a zero is on the unit circle then it's reciprocal equates it's conjugate (the quadruple becomes a a pair); moreover if $z\pm 1$ then the reciprocal and the conjugate coincides.
+		\end{itemize}
+		Note that if $z=-1$ and $M$ is odd, then this means $H(-1) = (-1)^{-M}H(-1)$ hence $H(-1)=0$: type II filters must always have a zero in $z=-1$.
+		
+		The same considerations holds for type III and IV linear phase systems, but the Z transform applied on such filters is in the form
+		\[ H(z) = - z^{-M} H(z^{-1}) \]
+		\begin{enumerate}
+			\item if $z=-1$ and $M$ is even, then $H(-1) = -(-1)^{-M} H(-1)$ where so $H(-1) = 0$ meaning that type III system must always have a zero in $z=-1$;
+			\item considering instead the case of $z=1$ independently by the value $M$ we obtain that $H(1) = 0$ and so any type III and IV system must have a zero in $z=1$.
+		\end{enumerate}
+	
+	\subsection{Design: windowing method}
+		Given the ideal frequency response $H_{id}(e^{j\omega})$ of the low pass filter defined as
+		\[ H_{id} \big(e^{j\omega}\big) = \begin{cases}
+			1 \qquad & |\omega| \leq \omega_c \\0 & \omega_c < |\omega| < \pi
+		\end{cases} \]
+		the ideal non-causal impulse response of such filter is described by the function
+		\[ h_{id}(n) = \begin{cases}
+			1 & n = 0\\
+			\frac{\sin(\omega_cn)}{\pi n} \qquad & n = \pm 1,\pm 2,\pm 3,\dots
+		\end{cases} \]
+		\begin{note}
+			this \textit{cardinal sine-look-like} sequence is obtained by applying the inverse Fourier transform on the rectangular spectrum as was computed in page \pageref{eq:four:rectangularinvers}, equation \ref{eq:four:rectangularinvers}.
+		\end{note}
+		The basic idea to implement such filter is so to use a finite length $M$ signal (truncating to a certain level the ideal impulse response) and delaying him in order to make him causal and so
+		\begin{equation}
+			h(n) = \begin{cases}
+				h_{id}\left(n-\frac M2\right) \qquad & n = 0,\dots,M \\0 & \textrm{otherwise}
+			\end{cases}
+		\end{equation}
+		The so determined real spectral behaviour can so be computed convolving the ideal low-pass transform with the one of the rectangular window of $M$ samples, hence
+		\begin{equation}
+			H\big(e^{j\omega}\big) = e^{-j\omega \frac M2} H_{id}\big(e^{j\omega}\big)  W \big(e^{j\omega}\big) = \frac{e^{-j\omega \frac M2}}{2\pi} \int_{-\pi}^{\pi} H_{id}\big(e^{j\theta}\big) \frac{ \sin \left( \frac{(\omega-\theta)(M+1)}{2} \right)  }{\sin \left( \frac{\omega - \theta}{2} \right)}\, d\theta
+		\end{equation}
+		
+		\begin{SCfigure}[2][b!t]
+			\centering \includegraphics[width=5cm]{windowfilter}
+			\caption{ideal vs real frequency response of a FIR  digital low-pass filter obtained using the windowing method.} \label{fig:filt:windowlowpass}
+		\end{SCfigure}
+		
+		As it can be seen in figure \ref{fig:filt:windowlowpass}, the impulse response truncation determines ripples causing approximation errors (due to the windowing) that cannot be handled (we cannot influence neither the ripple amplitude $\delta_1,\delta_2$ nor the selectivity); having a symmetric impulse response we obtain a type I or II linear phase system. This approach can be used not only for low-pass filters but for any type of LTI discrete-time system.
+	
+		In general increasing the filter length $M$ improves the selectivity, but the approximation errors remains unchanged; as $M$ grows the group delay and the computational cost also increase.
+		
+		\paragraph{Design steps} In order to design a FIR filter based on the windowing method the following procedure can be used:
+		\begin{enumerate}
+			\item compute the ideal impulse response $h_{id}(n)$ of the system whose transform is the associated ideal filter $H_{id}(e^{j\omega})$;
+			
+			\item given the filter specification (such $\delta,\omega_p,\omega_s$) chose the simplest window (considering as example the one described in table \ref{tab:dft:windowfunctions}, page \pageref{tab:dft:windowfunctions}) function such that $\varepsilon \leq 20 \log_{10} \delta$ where $\varepsilon$ is the maximum ripple amplitude;
+			
+			\item set  $M$ so that $\omega_s-\omega_p = \Delta \omega \geq \Delta \omega_m$ where $\Delta \omega_m$ is the main-lobe width of the chosen window;
+			
+			\item compute the coefficient of $w(n)$ for $n=0,\dots,M$;
+			\item compute the impulse response $h(n) = h_{id}\left( n - \frac M2\right) w(n)$;
+			\item compute the frequency response $H(e^{j\omega})$ of $h(n)$ and check the compliance with specifications.			
+		\end{enumerate}
+		If necessary start a iterative \textit{trial\&error} approach by tweaking the window length $M$ to find the proper transfer function.
+	
+	\subsection{Design: algorithmic method}
+		Finite impulse response discrete time system can be numerically determined using optimization techniques; given the fixed ideal frequency response $H_{id}(e^{j\omega})$ and the \textit{real} $H(e^{j\omega})$ that's parametric, using numerical minimization algorithms is possible to search for parameters that minimize the maximum error, solving the problem
+		\[ \textrm{minimize } \quad \Big| H\big(e^{j\omega}\big) - H_{id} \big(e^{j\omega}\big) \Big| \]
+		or the norm of the error
+		\[ \textrm{minimize } \quad \Big\| H\big(e^{j\omega}\big) - H_{id} \big(e^{j\omega}\big) \Big\| \]
+		The minimization is so performed on a filter with a predefined length $N$ of the impulse response and such kind of problem are mathematically proven to always have a unique solution.
+		
+		
+		
+		
+		
+	\section{Examples}
 		\begin{example}{: IIR filter design}
 			The goal is to design a Butterworth discrete-time low pass filter with specifications:
 			\begin{itemize}

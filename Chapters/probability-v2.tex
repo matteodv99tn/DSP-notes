@@ -235,6 +235,26 @@
 			ii) \qquad & \phi_X(0) = E\{ X^2(t_m)\} && \forall t_m \\
 			iii) \qquad & |\phi_X(t_m)| \leq \phi_X(0)
 		\end{align*}
+		Property $ii)$ describes that for any wide-sense stationary process the \textbf{expected} (average) \textbf{power} $E\{X^2(t_m)\}$ of the stochastic process $X$ at any time $t_m$ can be regarded as the autocorrelation $\phi_X(0)$ of the signal for $\tau = 0$ and this value is strictly positive; property $iii)$ express that the autocorrelation for $\tau = 0$ is the upper bound of the autocorrelation function $\phi_X(\tau)$.
+		
+		
+		\begin{example}{: wide-sense stationary process}
+			Considering the random process $X(t)$ defined as
+			\[ X(t) = \cos(t + U) \hspace{2cm} U \backsim \mathcal U(0,2\pi) \]
+			where so $U$ is a random variable uniformly distributed in the range $[0,2\pi]$, in order to prove it's wide-sense stationarity we firstly need to check that its mean is time invariant by so computing the first order raw statistical moment:
+			\[ \mu_X(t) = E\{X(t)\} = E\{ \cos(t + U) \} = \int_0^{2\pi} \cos(t+u) \frac 1 {2\pi}\, du = 0 \quad \forall t\in \mathds R \]
+			
+			Verified this condition we now have to check the autocorrelation of the signal by computing the joint raw statistical moment of the random variable at different times:
+			\[\phi_X(t_1,t_2) = E\{ X(t_1) X(t_2) \} = E\{ \cos(t_1 + U) \cos(t_2 + U) \} \]
+			Using trigonometric rules we obtain that
+			\begin{align*}
+				\phi_X(t_1,t_2) & = E\left\{ \frac 1 2 \cos(t_1+t_2+2U) + \frac 1 2 \cos(t_1-t_2) \right\} \\
+				& = \cancelto{0}{\int_0^{2\pi} \frac 1 2 \cos(t_1 + t_2 + 2u)\frac 1{2\pi}\, du} + \frac 1 2 \cos(t_1-t_2)
+			\end{align*}
+			We can so observe that the autocorrelation function only depends on the time difference $\tau = t_1-t_2$ between the evaluation of the signal and can so be regarded as
+			\[ \phi_X(t_1,t_2) = \phi_X(\tau) = \frac 1 2 \cos \tau \]
+			With this condition satisfied we verified that $X(t)$ is a wide-sense stationary process.			
+		\end{example}
 		
 		\paragraph{Cyclo-stationarity} A stochastic process is defined as \de{cyclo-stationary} (with period $T_0$) iw both mean $\mu$ and autocorrelation $\phi$ are periodic with period $T_0$, so
 		\begin{align*}

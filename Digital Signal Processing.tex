@@ -7,6 +7,7 @@
 
 \usepackage[defaultfam,light,tabular,lining]{montserrat}
 \renewcommand*\oldstylenums[1]{{\fontfamily{Montserrat-TOsF}\selectfont #1}}
+\allowdisplaybreaks
 
 \begin{document}
 	
@@ -46,7 +47,7 @@
 	
 	\tableofcontents
 		
-%	\input{Chapters/introduction.tex}	
+	\input{Chapters/introduction.tex}	
 	
 	\mainmatter
 	
@@ -56,8 +57,13 @@
 	\input{Chapters/dft-v2.tex}
 	\input{Chapters/zdomain-v2.tex}
 	\input{Chapters/filters-v2.tex}
-%	\input{Chapters/prep.tex}
 	
+	
+	\backmatter
+	
+	\input{Chapters/probstatistic.tex}
+	\input{Chapters/prep.tex}
+
 %	\input{Chapters/fourier.tex}
 %	\input{Chapters/probability.tex}
 %	\input{Chapters/conversions.tex}
@@ -65,9 +71,7 @@
 %	\input{Chapters/zdomain.tex}
 %	\input{Chapters/filters.tex}
 	
-	\backmatter
-	
-%	\input{Chapters/probstatistic.tex}
+
 	
 	
 \end{document}
