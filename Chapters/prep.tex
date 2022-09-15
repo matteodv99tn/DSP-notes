@@ -1,6 +1,26 @@
 \chapter{Open Questions Examples}
 
 \newquestion
+	\paragraph{Question} Derive the continuous-time Fourier transform of AM and PM signals.
+	
+	\paragraph{Answer} We consider a signal $x(t)$ modulated in amplitude if it can be regarded as a product between a variable amplitude $a(t)$ and a cosine function:
+	\[ x(t) = a(t) \cos\big(\Omega_0 t + \phi\big) \]
+	It's transform can be computed using the windowing theorem that states that the transform of a product between two signals is the convolution of their transforms, hence 
+	\begin{align*}
+		X(\Omega) & = A(\Omega) * \left( \frac {e^{j\phi}} 2 \delta\big(\Omega-\Omega_0\big) + \frac {e^{-j\phi}} 2 \delta\big(\Omega+\Omega_0\big) \right) \\
+		& = \frac{e^{j\phi}}{2} \intinf A(\theta) \delta\big(\Omega-\theta-\Omega_0\big)\, d\theta + \frac{e^{-j\phi}}{2} \intinf A(\theta) \delta\big(\Omega-\theta+\Omega_0\big)\, d\theta
+	\end{align*}
+	Knowing the property of the Dirac's delta function $\intinf g(x) \delta(x-x_0) \, dx = g(x_0)$ we can so compute the spectra of the amplitude modulated signal as
+	\[ X(\Omega) = \frac{e^{j\theta}}{2} A\big(\Omega-\Omega_0\big) + \frac{e^{-j\theta}}{2} A\big(\Omega+\Omega_0\big)  \]
+	This means that the resulting spectrum is a distortion by a complex component $e^{\pm j \theta} / 2$ and shifted by $\pm\Theta_0$ of the spectrum $A(\Omega)$ of the amplitude.
+	
+	The analysis of signals modulated in phase described in the form $x(t) = A \cos\big(\Omega_0t + \theta(t) \big)$ isn't usually an \textit{easy} problem (analytically manageable \textit{by hand}), but in the simple case
+	\[ x(t) = A \cos\big(\Omega_0t + \theta(t)\big) \hspace{2cm} \textrm{with } \theta(t) = k_p \cos(\Omega_pt) \]
+	the solution can be obtained. Considering the signal $x(t)$ as the real part of the function
+	\[ x(t) = \Re{ A e^{j\Omega_0t} e^{jk_p(\Omega_pt)} } \]	
+	
+	
+\newquestion
 	\paragraph{Question} Provide the definition of strict-sense stationary, wide-sense stationary, cyclostationarity and ergodic processes. Explain the relationship between them and why the ergodic properties are particularly useful in practice.
 	
 	\paragraph{Answer} A strict-sense stationary process is characterized by having a time-invariant mean value and signal power; in particular the probability distribution of the random variables changing with times are always constant, meaning that
@@ -25,7 +45,7 @@
 	By applying on such result the \dtft formulation we obtain
 	\begin{align*}
 		\four{x(n)*y(n)} & = \infsum n \left( \infsum k x(n)y(n-k) \right) e^{-j\omega n} \\
-		& = \infsum n x(n) e^{-j\omega n} \left( \infsum k y(n-k) e^{-j\omega(n-k)} \right) \qquad \textrm{set } u = n-k \\ &  = \infsum n x(n) e^{-j\omega u} \left( \infsum u y(u) e^{-j\omega u } \right) \\
+		& = \infsum n x(n) e^{-j\omega n} \left( \infsum k y(n-k) e^{-j\omega(n-k)} \right) \qquad \textrm{set } u = n-k \\ &  = \infsum n x(n) e^{-j\omega n} \left( \infsum u y(u) e^{-j\omega u } \right) \\
 		& = \four{x(n)} \four{y(n)}
 	\end{align*}
 	
@@ -244,7 +264,7 @@
 		H\big(e^{j\omega}\big) & = b_{M/2} e^{-j\omega \frac M2} + \sum_{n=0}^{\frac M2-1} b_n \left( e^{-j\omega n} + e^{-j\omega(M-N)} \right) \\
 		& = e^{-j\omega \frac M 2} \left( b_{M/2} + \sum_{n=0}^{\frac M2-1} 2 b_n \left( \frac{e^{j\omega\left( \frac M 2 - n \right)} +e^{-j\omega\left( \frac M 2 - n \right)} }{2} \right) \right) \\
 		& = e^{-j\omega \frac M 2} \left( b_{M/2} + \sum_{m=0}^{\frac M2-1} 2 b_m \left( \frac{e^{j\omega m } +e^{-j\omega m} }{2} \right) \right) \\
-		& = e^{-j\omega \frac M 2} \sum_{m=0}^{M/2} c_m \cos(\omega m) = e^{-j\omega} A_e(\omega)
+		& = e^{-j\omega \frac M 2} \sum_{m=0}^{M/2} c_m \cos(\omega m) = e^{-j\omega \frac M2} A_e(\omega)
 	\end{align*}
 	Considering that $A_e(\omega)$ is a real evaluated signal with an even symmetry, then the overall phase response is linear depending on the contribution of $e^{-j\omega \frac M2}$.
 	
@@ -334,11 +354,24 @@
 	Knowing that the spectra of a continuous-time system is defined in the set $[-\infty,\infty]$ we can see that the bilinear transform doesn't generate any spectral replica because the spectrum is mapped in the domain of the transform for discrete-time signals:
 	\[ \Omega: [-\infty,\infty] \quad \mapsto \quad \omega:[-\pi,\pi] \]
 	
+	To check how such transformation preserves stability is more useful to revert the bilinear transform in order to express $z$ as function of $s$ and so
+	\begin{align*}
+		Ts \left( 1 + \frac 1 z\right) & = 2 \left(1 - \frac 1 z\right) \\
+		Ts \big(z+1\big) & = 2\big(z-1\big) \\
+		\big(Ts-2\big) z & = -Ts - 2 \\
+		z &= - \frac{Ts + 2}{Ts-2} = \frac{1 +\frac T2 s}{1 - \frac T2 s}
+	\end{align*}
+	We can so see that whenever $\Re{s} > 0 $ (and so the poles for continuous-time systems are unstable) the module of the numerator is bigger then the one of the denominator, hence $|z|>1$ resulting in unstable poles for the discrete-time systems. When instead $\Re{s}<0$ we can similarly prove that the poles are transformed in the stable region $|z|<1$ for the Z transform. In the particular case where $\Re{s} = 0$ we have that numerators and denominator are complex conjugates and their modules are equals, hence $|z| = 1$.
 	
+\newquestion
+	\paragraph{Question} Prove that wide-sense stationary processes can only be power signals.
 	
-	
-	
-	
+	\paragraph{Answer} The energy $\mathcal E$ of a stochastic process $X(t)$ is determined by the second order raw statistical moment $E\{X^2(t)\}$ hence
+	\[ \mathcal E = \intinf E\{ X^2(t) \} \,dt = \intinf E\{x^2(t)\}\, dt = \intinf \phi_X(t)\, dt \]
+	In case of wide-sense stationary random processes the autocorrelation function $\phi_X(t)$ is constant to $\phi_X(0)$, hence the energy diverges to infinity:
+	\[ \mathcal E = \intinf \phi_X(0)\, dt = \infty  \]
+	However if we consider the power $\mathcal P$ of the signal we have that in the case of wide-sense stationary stochastic processes
+	\[ \mathcal P = \lim_{T\rightarrow \infty} \frac 1{2T} \int_{-T}^T E\{x^2(t)\} \, dt = \lim_{T\rightarrow \infty} \frac 1{2T} \int_{-T}^T \phi_X(0) = \lim_{T\rightarrow \infty}  \cancel{\frac 1 {2T} 2T}\phi_X(0) = \phi_X(0) \]
 	
 	
 	

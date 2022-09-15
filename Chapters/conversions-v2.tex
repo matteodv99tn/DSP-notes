@@ -196,7 +196,7 @@
 			Considering the case of a rounding quantization error, the $SQNR$ parameter in decibel can be expressed as
 			\begin{equation}
 			\begin{aligned}
-				SQNR_{dB} & = 10 \log_10\left(\frac{\sigma_x^2}{\sigma_q^2}\right) = 10 \log_{10} \left( \sigma_x^2 \frac 3 {F_s^2} 2^{2b} \right) \\ \Rightarrow \quad SQNR_{dB}  & \approx 6.02b + 20\log_{10}\sigma_x + 20\log_{10} \left( \frac{\sqrt 3}{F_s} \right)
+				SQNR_{dB} & = 10 \log_{10}\left(\frac{\sigma_x^2}{\sigma_q^2}\right) = 10 \log_{10} \left( \sigma_x^2 \frac 3 {F_s^2} 2^{2b} \right) \\ \Rightarrow \quad SQNR_{dB}  & \approx 6.02b + 20\log_{10}\sigma_x + 20\log_{10} \left( \frac{\sqrt 3}{F_s} \right)
 			\end{aligned}
 			\end{equation}
 			This means that for each bit $b$ added on the quantization level, the potential improvement of the signal-to-noise ratio is of about $6dB$; in general a good rule to design the number of bits to have a low quantization error is
